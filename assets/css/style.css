@@ -1387,9 +1387,14 @@ ul, ol { list-style: none; padding: 0; }
 }
 
 @media (max-width: 640px) {
-  /* the nudges would collide with the title on a phone */
+  /* these two hang off the lime band's top and right edges, which on a phone
+     puts them over the title and past the viewport — no room, so they sit out */
   .nudge--fume, .nudge--wave { display: none; }
-  .nudge--scratch { left: auto; right: 3%; }
+  /* The scratcher keeps the desktop's left:31%. That lands it in the empty gap
+     between the home icon and the About/Resume pair, which is the one place in
+     the header with no text under it. `right: 3%` used to park it directly on
+     top of "Resume". Its feet (94px) also stop short of the eyebrow below. */
+  .nudge--scratch { left: 31%; right: auto; }
 }
 
 @media (max-width: 460px) {
