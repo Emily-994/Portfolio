@@ -1,0 +1,1416 @@
+/* =========================================================
+   Emily Zhang — Portfolio
+   Design tokens sampled directly from the Figma exports.
+   See design.md for the full system documentation.
+   ========================================================= */
+
+/* ---------- 1. Tokens ---------- */
+:root {
+  /* Colour — sampled from the source design files */
+  --cream:      #EFEEE3;  /* page background */
+  --cream-warm: #F5F4EC;  /* raised surfaces / card interiors */
+  --ink:        #3E3E3E;  /* primary text */
+  --ink-soft:   #6F6E64;  /* secondary text, meta values */
+  --red:        #C23A3C;  /* accent: headings, labels, links */
+  --red-deep:   #A62E30;  /* accent hover */
+  --olive:      #CFCCAD;  /* project card panels */
+  --lime:       #E8F19A;  /* image panels on case-study pages */
+  --rule:       #C9C6B4;  /* hairlines and borders */
+
+  /* Type */
+  /* TWO FACES, following ziaoh.com's system exactly.
+     --font         the working sans: navigation, labels, metadata, long-form
+                    body copy, footer. Source Sans 3 is Adobe's maintained
+                    release of Source Sans Pro, served under the newer name.
+     --font-display the editorial serif: short expressive lines only — the
+                    hero, page titles, project names, feature headings.
+                    Instrument Serif is the face ziaoh uses (not Playfair).
+     Neither face is ever used bold. See design.md §3. */
+  --font: "Source Sans 3", "Source Sans Pro", -apple-system,
+          BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-display: "Instrument Serif", "Iowan Old Style", Georgia,
+          "Times New Roman", serif;
+
+  /* Type scale, tuned for laptop screens (1280–1512px).
+     Reference points measured off karenlou.com (a flat 16px throughout) and
+     ziaoh.com (14px chrome, 20px lead, 44px project title). Sizes below land
+     between the two: 46–52px hero, 40px case-study title, 16px body, 14px chrome. */
+  --fs-display: clamp(2rem, 3.6vw, 3.25rem);          /* home hero — 46px @1280 */
+  --fs-title:   clamp(1.875rem, 2.9vw, 2.5rem);       /* case-study title — 37→40px */
+  --fs-lead:    clamp(1.125rem, 1.6vw, 1.3125rem);    /* hero paragraphs — 21px serif */
+  --fs-body:    1rem;                                 /* 16px, flat — matches karenlou */
+  --fs-small:   0.9375rem;                            /* 15px — dense body, meta values */
+  --fs-label:   0.75rem;                              /* 12px red section labels */
+  --fs-nav:     0.875rem;                             /* 14px — matches ziaoh */
+  --fs-micro:   0.6875rem;                            /* 11px — tags, eyebrows */
+
+  /* Layout */
+  --wrap:   min(1220px, 88vw);
+  --wrap-n: min(820px, 88vw);   /* narrow measure for case-study prose */
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+
+  /* Emily's own doodles, sliced from assets/doodling/Untitled_Artwork.png.
+     They are used as masks rather than plain images so they take their colour
+     from the page — her ink is already exactly --red, and the house needs to
+     follow the nav's ink→red hover like every other link. */
+  --doodle-frame: url('../img/doodle-frame.png');
+  --doodle-star:  url('../img/doodle-star.png');
+  --doodle-house: url('../img/doodle-house.png');
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur:  0.5s;
+}
+
+/* ---------- 2. Reset & base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  position: relative;   /* the document-level nudge layer anchors to this */
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: 1.62;
+  letter-spacing: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img { max-width: 100%; display: block; height: auto; }
+a   { color: inherit; }
+
+h1, h2, h3, h4, p, figure, ul, ol { margin: 0; }
+/* ol as well as ul: the process rail and the numbered insights are ordered
+   lists that supply their own markers, so the browser's must be off. */
+ul, ol { list-style: none; padding: 0; }
+
+::selection { background: var(--lime); color: var(--ink); }
+
+:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.wrap   { width: var(--wrap);   margin-inline: auto; }
+.wrap-n { width: var(--wrap-n); margin-inline: auto; }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute; left: 50%; top: 0;
+  transform: translate(-50%, -120%);
+  background: var(--red); color: var(--cream);
+  padding: 0.6rem 1.1rem; border-radius: 0 0 8px 8px;
+  font-size: 0.875rem; text-decoration: none; z-index: 200;
+  transition: transform 0.25s var(--ease);
+}
+.skip-link:focus { transform: translate(-50%, 0); }
+
+/* ---------- 3. Scroll progress (case-study pages) ---------- */
+.progress {
+  position: fixed; inset: 0 auto auto 0;
+  height: 2px; width: 100%;
+  transform: scaleX(0); transform-origin: 0 50%;
+  background: var(--red);
+  z-index: 120;
+}
+
+/* ---------- 4. Site header / nav ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  padding: clamp(1.5rem, 3.2vw, 2.75rem) 0;
+  background: color-mix(in srgb, var(--cream) 88%, transparent);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+  transition: transform 0.45s var(--ease), background 0.3s linear;
+}
+/* Header retracts while scrolling down, returns on scroll up */
+.site-header.is-hidden { transform: translateY(-115%); }
+.site-header.at-top    { background: transparent; backdrop-filter: none; }
+
+.nav {
+  display: flex; align-items: center;
+  gap: 1.5rem;
+}
+.nav-group { display: flex; gap: clamp(1.5rem, 3.4vw, 3.5rem); }
+/* keeps the About/Resume group flush right whether or not a Home group precedes it */
+.nav-group:last-child { margin-left: auto; }
+
+.nav-link {
+  position: relative;
+  font-size: var(--fs-nav);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+  padding-bottom: 3px;
+  transition: color 0.28s var(--ease);
+}
+.nav-link::after {
+  content: ""; position: absolute; left: 0; bottom: 0;
+  width: 100%; height: 1.5px; background: var(--red);
+  transform: scaleX(0); transform-origin: 100% 50%;
+  transition: transform 0.42s var(--ease);
+}
+/* HOME is her drawn house. Masked with currentColor so it sits in ink and
+   turns red on hover, exactly like the word it replaced. */
+.nav-home { display: inline-flex; align-items: center; }
+.house {
+  display: block;
+  height: clamp(20px, 1.7vw, 25px);
+  aspect-ratio: 141 / 223;
+  background: currentColor;
+  -webkit-mask: var(--doodle-house) center / contain no-repeat;
+          mask: var(--doodle-house) center / contain no-repeat;
+}
+
+.nav-link:hover, .nav-link:focus-visible { color: var(--red); }
+.nav-link:hover::after,
+.nav-link:focus-visible::after,
+.nav-link[aria-current="page"]::after { transform: scaleX(1); transform-origin: 0 50%; }
+.nav-link[aria-current="page"] { color: var(--red); }
+
+/* ---------- 5. Hero (home) ---------- */
+/* Centred and compact: the paragraphs stack close under the title rather than
+   floating in the middle of the page. */
+.hero {
+  text-align: center;
+  padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(2rem, 4vw, 3.5rem);
+}
+
+.hero-title {
+  /* sans here, serif in the paragraphs below — as drawn in the mockup, and the
+     same split ziaoh uses on its case-study pages (sans H1, serif body lines) */
+  font-size: var(--fs-display);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.015em;   /* large sizes get NEGATIVE tracking */
+  text-wrap: balance;
+  color: var(--red);
+  margin-bottom: clamp(0.75rem, 1.6vw, 1.35rem);
+}
+
+/* delight: each word rises into place on load */
+.hero-title .word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.5em);
+  animation: rise 0.85s var(--ease) forwards;
+}
+@keyframes rise { to { opacity: 1; transform: none; } }
+
+/* delight: a cut-out of Emily, arms up, in place of the old 👋. The wrapper
+   keeps the .word rise animation; the image inside carries the bobble, so the
+   two no longer fight over the same animation property. */
+.wave-word {
+  display: inline-block;
+  line-height: 0;              /* no strut — the image sets the box height */
+  vertical-align: -0.22em;     /* the cut-out is taller than a glyph, so it hangs
+                                  below the baseline to sit level with the caps */
+}
+.wave-img {
+  display: block;
+  height: 1.5em;
+  width: auto;
+  transform-origin: 50% 92%;   /* pivots near the feet, so the head swings most */
+  /* no delay and no rest beat: it is already bobbling when the page paints, and
+     it never stops. ease-in-out, not --ease, because --ease is an entrance curve
+     that would snap at each turn; this one decelerates into every reversal. */
+  animation: bobble 1.6s ease-in-out infinite;
+}
+/* hovering the title doubles the tempo — the same hello, more excited */
+.hero-title:hover .wave-img { animation-duration: 0.8s; }
+
+/* one continuous rock: left, up, right, up, back to left. 0% and 100% hold the
+   same pose so the loop closes on itself with no seam. */
+@keyframes bobble {
+  0%, 100% { transform: translateY(0)    rotate(-6deg); }
+  25%      { transform: translateY(-7%)  rotate(0deg); }
+  50%      { transform: translateY(0)    rotate(6deg); }
+  75%      { transform: translateY(-7%)  rotate(0deg); }
+}
+
+/* 680px, not wider: Instrument Serif is narrow, so a wider box lets the first
+   paragraph collapse onto a single long line at some widths. This measure keeps
+   both paragraphs at two balanced lines across the whole laptop range. */
+.hero-body { max-width: min(680px, 100%); margin-inline: auto; }
+
+.hero-lead {
+  font-family: var(--font-display);
+  font-size: var(--fs-lead);
+  line-height: 1.5;           /* reading text always 1.5–1.6 */
+  /* Even out the line lengths instead of filling each line greedily, so no line
+     is left holding one or two orphaned words. Ignored by older browsers, which
+     simply fall back to normal wrapping. */
+  text-wrap: balance;
+}
+.hero-lead + .hero-lead { margin-top: 1.35rem; }
+
+/* ---------- 6. Rules ---------- */
+/* The section lines run edge-to-edge with the project panels — same width as
+   .wrap — so the rule visibly measures the grid rather than floating inside it. */
+.rule {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  width: var(--wrap);
+  margin: 0 auto;
+}
+
+/* ---------- 7. Work grid (home) ---------- */
+.work { padding: clamp(3.5rem, 8vw, 7rem) 0 clamp(3rem, 7vw, 6rem); }
+
+/* Equal thirds, and equal panels. The three source images have different ratios
+   (1.24, 1.61, 1.55), so cards sized to their own image came out three different
+   heights and pushed each name to a different line — as did the downward offset
+   the middle card used to carry. One shared ratio for all three puts every panel
+   on the same footprint and every name on the same baseline. */
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.9rem, 1.8vw, 1.5rem);
+  align-items: start;
+}
+
+/* the label is a sibling of the <a>, not a child, so hovering either the card
+   or the label lights up both */
+.work-item { position: relative; }
+
+.card {
+  position: relative;
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+  background: var(--olive);
+  padding: 9%;              /* % of card width — matches the design's inset */
+  /* Each card's height is derived from its own image so the olive frame reads
+     as an even 9% band on all four sides:  height/width = 0.82/imageRatio + 0.18
+     Set per card below; this is the fallback. */
+  /* One ratio for all three. It sits between the images' own ratios, so each is
+     contained with a modest olive band — image 1 gains a little at the sides,
+     images 2 and 3 a little above and below — instead of each card resizing
+     itself and breaking the row. */
+  aspect-ratio: 1 / 0.78;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.55s var(--ease), box-shadow 0.55s var(--ease);
+}
+
+.card-media {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;   /* never crop — these are finished, composed images */
+  /* No radius or shadow here any more: the artwork carries its own rounded
+     frame and shadow, and its transparent corners are composited onto the olive
+     panel colour at export time, so an added rectangular shadow would trace a
+     box the viewer cannot see the edges of. */
+  transition: transform 0.6s var(--ease);
+}
+
+/* Wait Room's artwork (1.24) is narrower than the padded content box (1.37), so
+   `contain` sized it by height and it stood taller than the other two, which are
+   sized by width. Narrowing its box to 78% flips it to being sized by width too,
+   landing it on the same height as its neighbours (78% x 0.82W / 1.24 ≈ 0.52W),
+   scaled down whole rather than cropped. The grid's place-items:center keeps the
+   narrower box centred in the olive panel. */
+.card-media--tall { width: 78%; }
+
+.work-item:hover .card,
+.card:focus-visible {
+  transform: translateY(-7px);
+  box-shadow: 0 24px 46px -30px rgba(43, 43, 30, 0.7);
+}
+.work-item:hover .card-media,
+.card:focus-visible .card-media { transform: scale(1.03); }
+
+/* Names and keywords sit permanently under each card, ziaoh-style. The hover
+   no longer swaps the panel's contents — it just lifts the card and underlines
+   the name, so nothing is hidden from anyone who never hovers. */
+.card-label {
+  display: grid;
+  justify-items: start;
+  gap: 0.55rem;
+  padding-top: 0.9rem;
+}
+
+.card-name {
+  text-wrap: balance;
+  font-family: var(--font-display);
+  font-size: clamp(1.125rem, 1.5vw, 1.375rem);
+  line-height: 1.2;
+  color: var(--red);
+  position: relative;
+}
+/* the name underlines on hover — the click affordance the overlay used to carry */
+.card-name::after {
+  content: ""; position: absolute; left: 0; bottom: -2px;
+  width: 100%; height: 1px; background: var(--red);
+  transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform 0.42s var(--ease);
+}
+.work-item:hover .card-name::after,
+.work-item:focus-within .card-name::after { transform: scaleX(1); }
+
+.card-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+.tag {
+  border: 1px solid var(--red);
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  font-size: var(--fs-micro);
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: var(--red);
+  white-space: nowrap;
+  transition: background 0.35s var(--ease), color 0.35s var(--ease);
+}
+.work-item:hover .tag { background: var(--red); color: var(--cream); }
+
+/* ---------- 8. Page head (inner pages) ---------- */
+.page-head {
+  position: relative;   /* anchors the nudges */
+  padding: clamp(2rem, 5vw, 4rem) 0 clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.eyebrow {
+  font-size: var(--fs-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 0.6rem;
+}
+
+/* --- Friendly nudges ------------------------------------------------------
+   The rabbits hang around the top of the page and scroll away with it — they
+   are in normal document flow, not fixed, so they behave like the feature they
+   illustrate: they turn up, they are ignorable, and they leave. Each has its
+   own idle tic. Entrance lives on the wrapper, the tic on the image inside, so
+   the two transforms never fight. */
+/* Document-level layer: sits at the very top of the page, above the header in
+   the document but behind it in paint order, and scrolls away with the page. */
+.nudges {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 0;                /* never affects layout */
+  pointer-events: none;
+}
+
+/* Placement is expressed two ways, both of which scale with the screen:
+   left/right/top as a PERCENTAGE OF THE CONTAINER, and --shift as a percentage
+   of the RABBIT'S OWN HEIGHT (that is what a percentage in translateY means).
+   No pixel or rem offsets, so the arrangement holds at any width. */
+.nudge {
+  --rot: 0deg;
+  --shift: 0%;
+  position: absolute;
+  display: block;
+  transform: translateY(var(--shift)) rotate(var(--rot));
+  animation: nudge-in 0.8s var(--ease) both;
+}
+
+@keyframes nudge-in {
+  from { opacity: 0; transform: translateY(calc(var(--shift) - 22%)) scale(0.88) rotate(var(--rot)); }
+  60%  { opacity: 1; transform: translateY(calc(var(--shift) + 3%))  scale(1.04) rotate(var(--rot)); }
+  to   { opacity: 1; transform: translateY(var(--shift))             scale(1)    rotate(var(--rot)); }
+}
+
+/* Each rabbit is a small rig, not a flat picture: the ink limbs were sliced out
+   of the artwork into their own layers, stacked under the body so the shoulder
+   joints stay hidden, and rotated about the point where they meet the body. So
+   the arm actually moves — the rabbit does not just wobble as a whole. */
+.rig { position: relative; display: block; }
+.rig-base  { position: relative; display: block; width: 100%; height: auto; }
+.rig-layer { position: absolute; inset: 0; width: 100%; height: auto; }
+
+/* 1 — hangs over the very top of the page, scratching the back of its head */
+/* stands on the top edge of the screen: its layer is anchored to the document
+   top, so top:0 puts the rabbit's own top exactly on the page edge */
+.nudge--scratch {
+  --rot: -3deg;
+  width: clamp(54px, 5.2vw, 74px);
+  top: 0; left: 31%;
+  animation-delay: 0.3s;
+}
+.nudge--scratch .rig-arm {
+  transform-origin: 77% 50%;                 /* the shoulder */
+  animation: scratch-arm 3.6s var(--ease) 1.1s infinite;
+}
+@keyframes scratch-arm {
+  0%, 48%, 100% { transform: rotate(0deg); }
+  54%           { transform: rotate(-9deg); }
+  60%           { transform: rotate(3deg); }
+  66%           { transform: rotate(-8deg); }
+  72%           { transform: rotate(2deg); }
+  78%           { transform: rotate(-6deg); }
+  86%           { transform: rotate(0deg); }
+}
+
+/* 2 — furious: elbows pump, and the anger mark throbs on the offbeat */
+/* 2 — stands on top of the lime band. Anchored to the band itself so its feet
+   stay on the edge at every width. */
+.nudge--fume {
+  --rot: 2deg;
+  width: clamp(52px, 5vw, 70px);
+  bottom: 100%; left: 56%;
+  --shift: 4%;              /* its own feet overlap the band's edge */
+  animation-delay: 1.5s;
+}
+.nudge--fume .rig-arml {
+  transform-origin: 30% 61%;
+  animation: elbow-l 2.4s var(--ease) 2.3s infinite;
+}
+.nudge--fume .rig-armr {
+  transform-origin: 70% 60%;
+  animation: elbow-r 2.4s var(--ease) 2.3s infinite;
+}
+@keyframes elbow-l {
+  0%, 60%, 100% { transform: rotate(0deg); }
+  70%           { transform: rotate(7deg); }
+  82%           { transform: rotate(-3deg); }
+}
+@keyframes elbow-r {
+  0%, 60%, 100% { transform: rotate(0deg); }
+  70%           { transform: rotate(-7deg); }
+  82%           { transform: rotate(3deg); }
+}
+.nudge--fume .rig-vein {
+  transform-origin: 66% 47%;
+  animation: vein-throb 2.4s var(--ease) 2.3s infinite;
+}
+@keyframes vein-throb {
+  0%, 55%, 100% { transform: scale(1) rotate(0deg); }
+  64%           { transform: scale(1.28) rotate(-6deg); }
+  74%           { transform: scale(1.05) rotate(3deg); }
+}
+
+/* 3 — leans in sideways over the edge and waves at you */
+/* 3 — leans in past the right edge, just below the band */
+.nudge--wave {
+  --rot: -7deg;
+  width: clamp(80px, 7.4vw, 112px);
+  /* stands on the right edge of the screen. Its containing block is the band,
+     which is --wrap wide and centred, so this reaches back out to the viewport:
+     half the difference between the band and the window. */
+  top: 100%;
+  /* +0.5vw pulls it back by the width its -7deg rotation adds to the bounding
+     box, so it sits flush without tripping horizontal page overflow */
+  right: calc((var(--wrap) - 100vw) / 2 + 0.5vw);
+  --shift: 8%;
+  animation-delay: 2.7s;
+}
+.nudge--wave .rig-arm {
+  transform-origin: 76% 28%;                 /* where the arm meets the head */
+  animation: wave-arm 3.1s var(--ease) 3.5s infinite;
+}
+@keyframes wave-arm {
+  0%, 52%, 100% { transform: rotate(0deg); }
+  60%           { transform: rotate(-15deg); }
+  68%           { transform: rotate(9deg); }
+  76%           { transform: rotate(-13deg); }
+  84%           { transform: rotate(6deg); }
+  92%           { transform: rotate(-4deg); }
+}
+
+/* the meta strip sits on a lime band, as in the mockup.
+   Doubled class beats the max-width on .meta, which is declared after this. */
+.meta.meta-band {
+  position: relative;   /* anchors the two rabbits that belong to the band */
+  background: var(--lime);
+  border-radius: 6px;
+  padding: clamp(1.1rem, 2.2vw, 1.6rem) clamp(1.1rem, 2.2vw, 1.75rem);
+  max-width: none;
+  margin-top: clamp(1.25rem, 2.6vw, 2rem);
+  /* four equal shares of the panel, each one centred in its own share, so the
+     row reads as evenly distributed rather than crowded to the left */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  justify-items: center;
+  text-align: center;
+  gap: clamp(1rem, 2vw, 1.75rem);
+}
+.meta.meta-band dd { text-align: center; }
+
+.page-title {
+  text-wrap: balance;
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--red);
+}
+
+/* meta strip: ROLE / TIMELINE / SKILLS / TOOLS */
+.meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1rem, 2.4vw, 2rem);
+  max-width: 760px;
+  margin-top: clamp(1.75rem, 3.4vw, 2.75rem);
+}
+.meta dt {
+  font-size: var(--fs-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 0.85rem;
+}
+.meta dd {
+  margin: 0;
+  font-size: var(--fs-small);
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+/* ---------- 9. Case-study prose ---------- */
+.section { padding-top: clamp(1.75rem, 3.6vw, 2.75rem); }
+
+/* Context on the left, Problem + Goals stacked on the right. Three full-width
+   blocks in a row left the top of the page very tall and very empty on the
+   right; two columns balance it and let the reader take the framing in at once. */
+.intro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 clamp(2rem, 4.5vw, 4rem);
+  align-items: start;
+}
+/* No measure cap here: each column is already a comfortable width, and capping
+   it made the right column stop short of the band and frame edges. Every block
+   on the page now runs to exactly the same left and right margin. */
+.intro-grid .prose { max-width: none; }
+
+.label {
+  font-size: var(--fs-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--red);
+  font-weight: 400;
+  margin-bottom: 0.8rem;
+}
+
+.prose { max-width: 74ch; }
+.prose p { text-wrap: pretty; }   /* no single-word last lines */
+.prose p + p { margin-top: 0.9em; }
+
+/* opt a block out of the 74ch measure so a long sentence runs on one line. No
+   `nowrap`: the cap is what forced the break, and at full column width the text
+   fits on its own — so it still wraps on its own once the column gets narrower
+   than the sentence, instead of running off the side of the page. */
+.prose--wide { max-width: none; }
+
+/* A line meant to be read as one line. It needs ~760px at the body size, but the
+   column is 88vw, so below a ~865px viewport it used to break after "and". Rather
+   than break, the type scales with the viewport: 1.8vw tracks the column's own
+   growth, so the sentence keeps roughly the same slack at every width and only
+   stops shrinking once it hits the full body size at ~890px. */
+.one-line {
+  white-space: nowrap;
+  font-size: min(1rem, 1.8vw);
+}
+
+/* ---------- 9b. Case-study building blocks ---------- */
+/* All of these run to the same left and right margin as .wrap — no block on a
+   case-study page is ever inset from another. */
+
+/* the project's central question, and other single-line statements */
+.lede {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 1.9vw, 1.625rem);
+  line-height: 1.35;
+  letter-spacing: -0.005em;
+  color: var(--red);
+  text-wrap: balance;
+  margin-top: clamp(2rem, 4vw, 3.25rem);
+}
+.lede-note {
+  font-size: var(--fs-small);
+  color: var(--ink-soft);
+  margin-top: 0.5rem;
+}
+
+/* red serif section headings, one step below the page title */
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+  line-height: 1.25;
+  color: var(--red);
+  margin-bottom: clamp(0.9rem, 1.6vw, 1.35rem);
+}
+
+/* Two columns that each mix writing and an archive shot, so the images stagger
+   diagonally instead of stacking: Context over the old events page on the left,
+   the old home page over Design goals on the right. */
+.brief-grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1fr;
+  gap: 0 clamp(2rem, 4.5vw, 4rem);
+  /* stretch, so both columns take the height of the taller one and their last
+     elements can be pushed to a shared bottom line */
+  align-items: stretch;
+}
+.brief-grid .prose { max-width: none; }
+/* first child to the top, last child to the bottom — so the events screenshot on
+   the left and the Design goals list on the right finish on the same line */
+.brief-col {
+  display: grid;
+  align-content: space-between;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+/* screenshots of the site as it was, captioned like plates */
+.archive { margin-top: 0; }
+.archive img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+.archive figcaption {
+  margin-top: 0.6rem;
+  text-align: center;
+  font-size: var(--fs-small);
+  color: var(--ink-soft);
+}
+
+/* emphasis inside prose — the only weight above 400 on the site */
+.prose strong { font-weight: 600; }
+
+/* red middot bullets, matching the labels' accent */
+.bullets { display: grid; gap: 0.45rem; margin-top: 0.15rem; }
+.bullets li {
+  position: relative;
+  padding-left: 1.05rem;
+  font-size: var(--fs-body);   /* body copy, same as .prose p beside it */
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+.bullets li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0.36em;
+  width: 0.72em; height: 0.72em;
+  background: var(--red);
+  -webkit-mask: var(--doodle-star) center / contain no-repeat;
+          mask: var(--doodle-star) center / contain no-repeat;
+}
+
+.numbered { counter-reset: n; display: grid; gap: 0.5rem; max-width: 78ch; }
+.numbered li {
+  counter-increment: n;
+  position: relative;
+  padding-left: 1.9rem;
+  font-size: var(--fs-body);   /* body copy */
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+.numbered li::before {
+  content: counter(n) ".";
+  position: absolute; left: 0; top: 0;
+  color: var(--red);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- research process rail --- */
+.process {
+  --rail-gap: clamp(1rem, 2.2vw, 2.25rem);
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--rail-gap);
+  counter-reset: none;
+  margin-top: clamp(0.5rem, 1.4vw, 1rem);
+}
+/* the line runs behind the pills and shows only in the gaps between them */
+.process::before {
+  content: "";
+  position: absolute;
+  /* exactly from the first pill centre to the last: with four equal columns and
+     three gaps, half a column is (100% - 3 * gap) / 8 — true at any width */
+  left:  calc((100% - 3 * var(--rail-gap)) / 8);
+  right: calc((100% - 3 * var(--rail-gap)) / 8);
+  top: 0.95rem;
+  border-top: 1px solid var(--rule);
+}
+.process-step { position: relative; text-align: center; }
+.process-pill {
+  position: relative;      /* paints above the rail */
+  display: inline-block;
+  background: var(--lime);
+  border-radius: 999px;
+  padding: 0.3rem 1.05rem;
+  font-size: var(--fs-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.process-items { display: grid; gap: 0.85rem; margin-top: 1.15rem; }
+.process-items li { display: grid; gap: 0.15rem; }
+.pi-name { font-size: var(--fs-small); line-height: 1.35; }
+.pi-note {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+/* --- photo collage (Content Generation) ------------------------------------
+   The lead photo's own 1.47 ratio sets the block height; the right column then
+   splits that height between a square-ish pair and a filler frame, so the two
+   sides always finish level without any hard-coded heights. */
+.gallery {
+  display: grid;
+  grid-template-columns: 1.47fr 1fr;
+  gap: clamp(0.65rem, 1.2vw, 1rem);
+  align-items: stretch;
+}
+.gallery-right {
+  display: grid;
+  grid-template-rows: auto 1fr;   /* pair sized by content, filler takes the rest */
+  gap: clamp(0.65rem, 1.2vw, 1rem);
+  min-height: 0;
+}
+.gallery-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(0.65rem, 1.2vw, 1rem);
+}
+
+.shot {
+  margin: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--cream-warm);
+}
+.shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.shot--lead img  { aspect-ratio: 1.47 / 1; }
+.gallery-pair img { aspect-ratio: 1.15 / 1; }
+.shot--fill { min-height: 0; }
+.shot--fill img { height: 100%; object-position: center 42%; }
+
+/* a divider between major blocks, matching the page-level rules */
+.section-break { margin: clamp(2.5rem, 5vw, 4rem) auto clamp(0.5rem, 1vw, 1rem); }
+
+/* inline links inside prose */
+.inline-link {
+  color: var(--red);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--red) 45%, transparent);
+  transition: border-color 0.3s var(--ease);
+}
+.inline-link:hover, .inline-link:focus-visible { border-bottom-color: var(--red); }
+
+@media (max-width: 760px) {
+  .gallery { grid-template-columns: 1fr; }
+  .shot--fill img { aspect-ratio: 1.83 / 1; height: auto; }
+}
+
+/* --- folding section ------------------------------------------------------
+   A native <details>/<summary>. No JavaScript is involved: it works even if the
+   script fails, is cached stale, or never loads, and it is keyboard operable and
+   announced correctly for free. The earlier button+JS version broke exactly this
+   way. Carries its own hairlines so the space above the heading and below the
+   body is one symmetric padding value rather than two rule margins to match. */
+.fold {
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  margin-block: clamp(2.5rem, 5vw, 4rem);
+}
+
+.fold-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(1.75rem, 3.4vw, 2.75rem) 0;
+  cursor: pointer;
+  list-style: none;          /* kill the default disclosure triangle */
+}
+.fold-head::-webkit-details-marker { display: none; }
+.fold-head:focus-visible { outline: 2px solid var(--red); outline-offset: 4px; }
+
+.fold-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 1.9vw, 1.625rem);
+  line-height: 1.35;
+  letter-spacing: -0.005em;
+  color: var(--red);
+  text-wrap: balance;
+}
+
+/* + that becomes − : the vertical stroke rotates away rather than just vanishing */
+.fold-icon {
+  position: relative;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  color: var(--red);
+}
+.fold-icon::before,
+.fold-icon::after {
+  content: "";
+  position: absolute;
+  background: currentColor;
+  border-radius: 1px;
+}
+.fold-icon::before { left: 0; right: 0; top: 50%; height: 1.5px; transform: translateY(-50%); }
+.fold-icon::after {
+  top: 0; bottom: 0; left: 50%; width: 1.5px;
+  transform: translateX(-50%);
+  transition: transform 0.45s var(--ease), opacity 0.3s var(--ease);
+}
+.fold[open] .fold-icon::after {
+  transform: translateX(-50%) rotate(90deg) scaleX(0.2);
+  opacity: 0;
+}
+
+.fold-inner .lede-note {
+  margin-top: 0;
+  padding-bottom: clamp(1.75rem, 3.4vw, 2.75rem);
+}
+
+/* The fold animates where the browser can interpolate a <details>' content box.
+   Everywhere else it simply opens and closes instantly — still fully working. */
+@supports selector(details::details-content) {
+  .fold::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition: block-size 0.45s var(--ease), content-visibility 0.45s allow-discrete;
+  }
+  .fold[open]::details-content { block-size: auto; }
+}
+@supports (interpolate-size: allow-keywords) {
+  :root { interpolate-size: allow-keywords; }
+}
+
+/* --- final-design showcase -------------------------------------------------
+   A full-page screenshot is 3700px tall. Dropping it into the page whole buries
+   everything below it, and scaling it to fit makes it unreadable. So it sits at
+   full width inside a browser frame with its own scroll: the visitor walks the
+   real page at real size, and the case study keeps its shape. */
+.showcase { margin-top: clamp(1.25rem, 2.5vw, 2rem); }
+
+.showcase-stage {
+  background: var(--lime);
+  border-radius: 8px;
+  padding: clamp(1rem, 3vw, 3rem);
+}
+
+.browser {
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 18px 44px -26px rgba(43, 43, 30, 0.65);
+}
+
+.browser-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  background: #E9E9E4;
+  border-bottom: 1px solid #DAD9D0;
+}
+.browser-dots { display: flex; gap: 0.4rem; }
+.browser-dots i {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #C9C7BE;
+}
+.browser-url {
+  flex: 1;
+  text-align: center;
+  font-size: var(--fs-micro);
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  /* keeps the dots' width from shifting the url off centre */
+  margin-right: calc(3 * 10px + 2 * 0.4rem);
+}
+
+.browser-view {
+  height: clamp(420px, 64vh, 760px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+.browser-view:focus-visible { outline: 2px solid var(--red); outline-offset: -2px; }
+.browser-view img { width: 100%; height: auto; display: block; }
+
+/* --- key insights, with a doodle in the margin --- */
+.insights { position: relative; }
+/* The list and the bulb share a flex row, vertically centred on each other. No
+   absolute offsets to re-tune when the copy changes — the bulb always sits level
+   with the middle of the insights it annotates. */
+.insights-row {
+  display: flex;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4rem);
+  margin-top: 0.25rem;
+}
+.insights-row .numbered { flex: 1 1 auto; margin-top: 0; }
+
+.bulb {
+  flex: 0 0 auto;
+  width: clamp(88px, 8.4vw, 132px);
+  height: auto;
+  margin-inline: auto clamp(1rem, 4vw, 3.5rem);
+  opacity: 0;
+  transform: rotate(-8deg) scale(0.85);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+.insights.is-visible .bulb { opacity: 1; transform: rotate(-4deg) scale(1); }
+
+@media (max-width: 900px) {
+  .brief-grid { grid-template-columns: 1fr; gap: 0; }
+  .process { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 2rem; }
+  .process::before { display: none; }
+  .insights-row { display: block; }
+  .bulb { display: none; }
+}
+@media (max-width: 560px) {
+  .process { grid-template-columns: 1fr; }
+}
+
+/* ---------- 10. Feature blocks (alternating image / text) ---------- */
+.features {
+  display: grid;
+  gap: clamp(1rem, 2vw, 1.75rem);
+  /* was 4rem, which left the FEATURES label floating unattached to its frames.
+     A section label should sit near what it labels — same distance the other
+     labels sit above their prose. */
+  padding: clamp(0.9rem, 1.6vw, 1.25rem) 0 clamp(1rem, 2vw, 2rem);
+}
+
+.feature {
+  border: 1px solid var(--rule);
+  padding: clamp(1.1rem, 2.2vw, 1.85rem);
+  display: grid;
+  grid-template-columns: 1fr 1.18fr;
+  gap: clamp(1.25rem, 3vw, 2.75rem);
+  align-items: start;
+}
+/* even blocks put the image on the left */
+.feature:nth-child(even) { grid-template-columns: 1.18fr 1fr; }
+.feature:nth-child(even) .feature-body  { order: 2; }
+.feature:nth-child(even) .feature-media { order: 1; }
+
+.feature-body { padding: clamp(0.5rem, 1.4vw, 1.25rem); }
+.feature-title {
+  text-wrap: balance;
+  font-family: var(--font-display);
+  font-size: 1.1875rem;       /* 19px — ziaoh's card h3 is 17px serif */
+  font-weight: 400;
+  line-height: 1.25;
+  color: var(--red);
+  margin-bottom: 0.75rem;
+}
+.feature-body p { font-size: var(--fs-small); line-height: 1.65; text-wrap: pretty; }
+
+/* Every showcase panel is the same size and the same shape, whatever it holds —
+   a lime field with the artwork centred inside it. Fixing the shape is what keeps
+   one feature on screen at a time: left to size themselves the clips carry whatever
+   aspect their scene happened to have, and feature 4 ran 1289px tall on its own,
+   more than a laptop viewport holds. The ratio is a shade wider than square so a
+   whole block clears an 800px viewport. */
+.feature-media {
+  background: var(--lime);
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  padding: clamp(0.9rem, 2.6vw, 2.25rem);
+  aspect-ratio: 604 / 579;
+}
+/* One column and a much narrower panel: the landscape shape would leave the
+   phones too small to read, so the panel turns portrait and they grow with it. */
+@media (max-width: 760px) {
+  .feature-media { aspect-ratio: 3 / 4; }
+}
+
+/* Sized by `max-*` rather than a width: the row is a definite fraction of a panel
+   whose height the aspect-ratio already fixed, so the percentages have a real box
+   to resolve against and each clip shrinks to fit whichever way it is long,
+   keeping its own ratio. Clips end up ~88% of the panel's height. */
+.feature-media img,
+.feature-media video {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: block;
+  border-radius: 10px;
+  transition: transform 0.9s var(--ease);
+}
+
+
+/* The clips are cropped to the phone screen itself — no device chrome, no canvas
+   behind it — so they need their own corner and a shadow to sit on the lime the
+   way a device would. The radius is close to the screen's own corner once scaled
+   down, and it also swallows the few stray pixels of bezel the crop leaves. */
+.feature-media--motion video,
+.feature-media--motion .feature-media-fallback {
+  border-radius: 16px;
+  box-shadow: 0 14px 30px -14px rgba(31, 32, 20, 0.45),
+              0 2px 5px rgba(31, 32, 20, 0.10);
+}
+
+/* Four of the clips are whole phones re-cut from the full-device recording. The
+   lime field, the phone's rounded silhouette and its shadow are all composited
+   into the file — the corners outside the device are painted the same `--lime`
+   the panel uses — so the file already reaches the panel's edges. A CSS radius
+   would round lime against lime, and a CSS shadow would trace a rectangle around
+   a phone that is not rectangular. Both come off. */
+.feature-media--device video,
+.feature-media--device .feature-media-fallback {
+  border-radius: 0;
+  box-shadow: none;
+}
+.feature:hover .feature-media img,
+.feature:hover .feature-media video { transform: scale(1.02); }
+
+/* Feature 5 is the only landscape piece — a slab of one screen rather than a whole
+   device. Sized like the rest it runs to the panel's full width and reads far
+   heavier than the phones beside it, so it is capped: at ~76% its area lands in
+   the same range as a phone's, and it sits on the lime as a card rather than
+   filling the frame. */
+.feature-media--card video,
+.feature-media--card .feature-media-fallback { max-width: 76%; }
+
+
+/* The still is only for reduced-motion. It needs two classes to outrank
+   `.feature-media img` above, which would otherwise force it back to block and
+   stack it underneath the video. */
+.feature-media--motion .feature-media-fallback { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  /* honour the preference: show the poster frame as a still, never loop */
+  .feature-media--motion video { display: none; }
+  /* radius and shadow already come from the `--motion` rule above */
+  .feature-media--motion .feature-media-fallback { display: block; }
+}
+
+/* framed single result image (KPB / Content Generation) */
+.result-frame {
+  border: 1px solid var(--rule);
+  padding: clamp(1rem, 2.2vw, 1.75rem);
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+}
+.result-frame img { width: 100%; }
+
+.note {
+  font-family: var(--font-display);
+  font-style: italic;         /* ziaoh sets its meta/caption line in serif italic */
+  font-size: 1rem;
+  letter-spacing: 0.02em;     /* small sizes get POSITIVE tracking */
+  color: var(--ink-soft);
+  margin-top: 0.9rem;
+}
+
+/* ---------- 11. Placeholder styling ---------- */
+/* Anything wearing .is-placeholder is copy Emily still needs to supply.
+   Remove the class (and the dashed frame disappears). */
+.is-placeholder {
+  border: 1px dashed var(--red);
+  border-radius: 4px;
+  padding: clamp(1rem, 2.2vw, 1.6rem);
+  background: color-mix(in srgb, var(--lime) 26%, transparent);
+}
+.is-placeholder::before {
+  content: "PLACEHOLDER — " attr(data-placeholder);
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 0.7rem;
+}
+
+/* ---------- 12. About page ---------- */
+/* An explicit photo column rather than a ratio: the portrait is a fixed, modest
+   size and the writing takes whatever is left, so the balance holds as the
+   viewport changes instead of the photo growing with it. */
+.about-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 460px) 1fr;
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: center;   /* photo and writing balanced on one centre line */
+  padding: clamp(2.5rem, 6vw, 5.5rem) 0 clamp(3rem, 7vw, 6rem);
+}
+
+/* --- portrait, in its hand-drawn mount --- */
+.portrait-block { margin: 0; }
+
+.portrait-name,
+.portrait-year {
+  font-size: var(--fs-small);
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+.portrait-name { margin-bottom: 0.9rem; }
+.portrait-year { margin-top: 0.9rem; text-align: right; }
+
+/* her hand-drawn rectangle, stretched over the photo's mount */
+.portrait-frame {
+  position: relative;
+  padding: clamp(1rem, 2.1vw, 1.8rem);
+  background: var(--doodle-frame) center / 100% 100% no-repeat;
+}
+.portrait-photo {
+  position: relative;
+  width: 100%;
+  display: block;
+}
+
+/* --- the writing --- */
+.about-body { padding-top: 0; }
+
+.about-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 2.1vw, 1.75rem);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: clamp(1.1rem, 2vw, 1.6rem);
+  text-wrap: balance;
+}
+/* the Chinese glyphs sit optically small next to Latin caps — nudge them up */
+.about-heading [lang="zh"] {
+  font-size: 1.08em;
+  letter-spacing: 0.02em;
+}
+
+/* fills its column instead of stopping at 58ch — wider lines, shorter block */
+.about-body p {
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+.about-body p + p { margin-top: 1.1em; }
+
+/* The one place a bold appears anywhere on this site. See design.md §3. */
+.about-body strong { font-weight: 600; }
+
+.list-lead { margin-top: 1.4em; }
+
+.star-list {
+  margin-top: 0.55rem;
+  display: grid;
+  gap: 0.4rem;
+}
+.star-list li {
+  position: relative;
+  padding-left: 1.6rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+/* her drawn star, masked so it paints in --red at any size */
+.star-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.34em;
+  width: 0.82em;
+  height: 0.82em;
+  background: var(--red);
+  -webkit-mask: var(--doodle-star) center / contain no-repeat;
+          mask: var(--doodle-star) center / contain no-repeat;
+  transition: transform 0.4s var(--ease);
+}
+/* delight: the stars spin a little when you run down the list */
+.star-list li:hover::before { transform: rotate(90deg) scale(1.15); }
+
+/* ---------- 14. Project navigation ---------- */
+/* Two destinations rather than one bare arrow: a way back to the index, and a
+   named next project so the reader knows what they are committing to. */
+.page-nav {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem 2rem;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--rule);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  padding-top: clamp(1.25rem, 2.5vw, 2rem);
+  /* keeps this band clear of the footer's rule below it */
+  padding-bottom: clamp(2rem, 4vw, 3.5rem);
+}
+
+.page-nav-back {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-size: var(--fs-nav);
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  color: var(--ink-soft);
+  transition: color 0.3s var(--ease);
+}
+.page-nav-back .arrow { transition: transform 0.35s var(--ease); }
+.page-nav-back:hover, .page-nav-back:focus-visible { color: var(--red); }
+.page-nav-back:hover .arrow { transform: translateX(-4px); }
+
+.page-nav-next {
+  display: grid;
+  justify-items: end;
+  gap: 0.25rem;
+  text-align: right;
+  text-decoration: none;
+  max-width: 60%;
+}
+.page-nav-eyebrow {
+  font-size: var(--fs-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+.page-nav-name {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 2.2vw, 1.875rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  transition: color 0.35s var(--ease);
+}
+.page-nav-name::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: -3px;
+  height: 1px; background: var(--red);
+  transform: scaleX(0); transform-origin: 100% 50%;
+  transition: transform 0.42s var(--ease);
+}
+.page-nav-next:hover .page-nav-name,
+.page-nav-next:focus-visible .page-nav-name { color: var(--red); }
+.page-nav-next:hover .page-nav-name::after,
+.page-nav-next:focus-visible .page-nav-name::after { transform: scaleX(1); transform-origin: 0 50%; }
+
+/* ---------- 15. Footer ---------- */
+.site-footer { padding: 0 0 clamp(2.5rem, 5vw, 4.5rem); }
+
+/* One line, ziaoh.com-style: signature flush left, contact links flush right,
+   separated by a middot. 14px sentence case — the same size as the nav, but
+   without its uppercase tracking, so the footer sits quietly under the page. */
+.footer-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.5rem;
+  padding-top: clamp(1.1rem, 1.8vw, 1.5rem);
+  font-size: var(--fs-nav);
+}
+
+.footer-sig {
+  color: var(--ink-soft);
+  letter-spacing: 0.02em;
+}
+
+.footer-links { display: flex; align-items: baseline; }
+
+.footer-link {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+  font-size: var(--fs-nav);
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  transition: color 0.3s var(--ease);
+}
+.footer-link + .footer-link { margin-left: 1.1rem; }
+.footer-link + .footer-link::before {
+  content: "·";
+  position: absolute;
+  left: -0.65rem;
+  color: var(--rule);
+}
+.footer-link::after {
+  content: ""; position: absolute; left: 0; bottom: -3px;
+  width: 100%; height: 1px; background: var(--red);
+  transform: scaleX(0); transform-origin: 100% 50%;
+  transition: transform 0.4s var(--ease);
+}
+.footer-link:hover, .footer-link:focus-visible { color: var(--red); }
+.footer-link:hover::after, .footer-link:focus-visible::after {
+  transform: scaleX(1); transform-origin: 0 50%;
+}
+
+
+/* ---------- 16. Scroll reveal ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.75s var(--ease), transform 0.75s var(--ease);
+  will-change: opacity, transform;
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+
+/* ---------- 17. Responsive ---------- */
+@media (max-width: 900px) {
+  .about-grid { grid-template-columns: 1fr; gap: clamp(1.75rem, 5vw, 2.75rem); }
+  .portrait-block { max-width: 460px; }
+  .meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  :root { --wrap: 88vw; }
+
+  /* a phone is too narrow to hold it on one line at any readable size */
+  .one-line { white-space: normal; font-size: var(--fs-body); }
+
+  .work-grid { grid-template-columns: 1fr; gap: clamp(1.25rem, 5vw, 2rem); }
+  /* One column: nothing to line up with, so each card goes back to its own
+     image's height rather than banding olive around a shared ratio. */
+  .card { aspect-ratio: auto; }
+  .card-media { height: auto; }
+  /* no shared row height to match at one column */
+  .card-media--tall { width: 100%; }
+
+  .intro-grid { grid-template-columns: 1fr; }
+
+  .feature,
+  .feature:nth-child(even) { grid-template-columns: 1fr; }
+  .feature:nth-child(even) .feature-body  { order: 0; }
+  .feature:nth-child(even) .feature-media { order: 0; }
+
+}
+
+@media (max-width: 640px) {
+  /* the nudges would collide with the title on a phone */
+  .nudge--fume, .nudge--wave { display: none; }
+  .nudge--scratch { left: auto; right: 3%; }
+}
+
+@media (max-width: 460px) {
+  .meta { grid-template-columns: 1fr; gap: 1.25rem; }
+  .nav-group { gap: 1.15rem; }
+}
+
+/* ---------- 18. Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .hero-title .word { opacity: 1; transform: none; }
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* ---------- 19. Print ---------- */
+@media print {
+  .site-header, .progress, .page-nav, .nudges, .site-footer { display: none; }
+  body { background: #fff; color: #000; }
+}

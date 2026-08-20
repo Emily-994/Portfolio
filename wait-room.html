@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wait Room — Emily Zhang</title>
+<meta name="description" content="Wait Room is an iPhone widget living inside iMessages that turns waiting for late friends into something playful, visible and shared. XHacks 2026 Best Presentation Prize.">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Sans+3:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="progress" aria-hidden="true"></div>
+<div class="nudges" aria-hidden="true">
+  <span class="nudge nudge--scratch">
+    <span class="rig">
+      <img class="rig-layer rig-arm" src="assets/img/nudge-scratch-arm.png" alt="" width="300" height="509">
+      <img class="rig-base" src="assets/img/nudge-scratch-body.png" alt="" width="300" height="509">
+    </span>
+  </span>
+</div>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header at-top">
+  <nav class="nav wrap" aria-label="Primary">
+    <div class="nav-group">
+      <a class="nav-link nav-home" href="index.html"><span class="house" aria-hidden="true"></span><span class="visually-hidden">Home</span></a>
+    </div>
+    <div class="nav-group">
+      <a class="nav-link" href="about.html">About</a>
+      <a class="nav-link" href="assets/resume/emily-zhang-resume.pdf" target="_blank" rel="noopener">Resume</a>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+
+  <article>
+
+    <header class="page-head wrap">
+
+      <!-- The nudges themselves: they hang around the top of the page and scroll
+           away with it, exactly like the feature they illustrate. Decorative. -->
+      <p class="eyebrow">XHacks 2026 · Best Presentation Prize</p>
+      <h1 class="page-title">Wait Room</h1>
+
+      <dl class="meta meta-band">
+
+        <!-- anchored to the band: one standing on it, one leaning past its right edge -->
+        <span class="nudge nudge--fume" aria-hidden="true">
+          <span class="rig">
+            <img class="rig-layer rig-arml" src="assets/img/nudge-fume-arml.png" alt="" width="300" height="518">
+            <img class="rig-layer rig-armr" src="assets/img/nudge-fume-armr.png" alt="" width="300" height="518">
+            <img class="rig-base" src="assets/img/nudge-fume-body.png" alt="" width="300" height="518">
+            <img class="rig-layer rig-vein" src="assets/img/nudge-fume-vein.png" alt="" width="300" height="518">
+          </span>
+        </span>
+
+        <span class="nudge nudge--wave" aria-hidden="true">
+          <span class="rig">
+            <img class="rig-layer rig-arm" src="assets/img/nudge-wave-arm.png" alt="" width="300" height="204">
+            <img class="rig-base" src="assets/img/nudge-wave-body.png" alt="" width="300" height="204">
+          </span>
+        </span>
+
+        <div>
+          <dt>Role</dt>
+          <dd>UI/UX Designer</dd>
+        </div>
+        <div>
+          <dt>Timeline</dt>
+          <dd>April 2026</dd>
+        </div>
+        <div>
+          <dt>Skills</dt>
+          <dd>UI/UX</dd>
+        </div>
+        <div>
+          <dt>Tools</dt>
+          <dd>Figma</dd>
+        </div>
+      </dl>
+    </header>
+
+    <div class="wrap">
+
+      <div class="intro-grid">
+
+        <section class="section reveal">
+          <h2 class="label">Context</h2>
+          <div class="prose">
+            <p>
+              Wait Room is an iPhone widget that lives within iMessages, allowing you to
+              schedule events, add guests, and track their progress in one application.
+              Wait Room is used for casual social events and it is a product that aim to
+              make waiting for late guests no longer frustrating but delightful.
+            </p>
+            <p>
+              This Project is done in a three-people team for XHacks 2026. We were selected
+              into the final round and won the Best Presentation Prize for clear storytelling
+              and design rationale.
+            </p>
+          </div>
+        </section>
+
+        <div class="intro-col">
+          <section class="section reveal">
+            <h2 class="label">The problem</h2>
+            <div class="prose">
+              <p>
+                We’ve all experienced the frustration of waiting on someone who’s late. The
+                person waiting often feels awkward having to ask for updates, while the late
+                person has to manually send progress messages. There’s little real visibility
+                into what “5 minutes away” actually means, creating uncertainty on both sides.
+                As a result, the waiting experience becomes isolating and tedious.
+              </p>
+            </div>
+          </section>
+
+          <section class="section reveal">
+            <h2 class="label">Design goals</h2>
+            <div class="prose">
+              <p>
+                We aim to create an effective yet playful product that reduces the friction
+                around being late. Through seamless, low-effort integration, shared visibility,
+                and lighthearted interactions, it keeps users informed, present, and connected.
+                Wait Room reframes lateness with clarity and humor rather than guilt.
+              </p>
+            </div>
+          </section>
+        </div>
+
+      </div>
+
+      <section class="section" aria-labelledby="features-heading">
+        <h2 class="label reveal" id="features-heading">Features</h2>
+
+        <div class="features">
+
+          <section class="feature reveal">
+            <div class="feature-body">
+              <h3 class="feature-title">Planning</h3>
+              <p>
+                Launch events seamlessly within your group chat.
+                No friction from switching apps.
+              </p>
+            </div>
+            <figure class="feature-media feature-media--motion feature-media--device">
+              <video class="feature-motion" autoplay muted loop playsinline preload="metadata"
+                     poster="assets/img/wait-room-1-phone-poster.jpg" width="572" height="1100">
+                <source src="assets/img/wait-room-1-phone.mp4" type="video/mp4">
+              </video>
+              <img class="feature-media-fallback" src="assets/img/wait-room-1-phone-poster.jpg"
+                   alt="Screen recording: creating a Wait Room event straight from the iMessage share menu." width="572" height="1100" loading="lazy" decoding="async">
+            </figure>
+          </section>
+
+          <section class="feature reveal">
+            <div class="feature-body">
+              <h3 class="feature-title">Tracking and the Wait Room</h3>
+              <p>
+                Interactive Timeline turns when the event approaches.
+                The timeline tracks based on the distance between the person to the
+                destination. Wait Room turns waiting into something you can see and feel.
+              </p>
+            </div>
+            <figure class="feature-media feature-media--motion feature-media--device">
+              <video class="feature-motion" autoplay muted loop playsinline preload="metadata"
+                     poster="assets/img/wait-room-2-phone-poster.jpg" width="570" height="1100">
+                <source src="assets/img/wait-room-2-phone.mp4" type="video/mp4">
+              </video>
+              <img class="feature-media-fallback" src="assets/img/wait-room-2-phone-poster.jpg"
+                   alt="Screen recording: the live timeline widget appearing in the chat, showing a guest 15 minutes late." width="570" height="1100" loading="lazy" decoding="async">
+            </figure>
+          </section>
+
+          <section class="feature reveal">
+            <div class="feature-body">
+              <h3 class="feature-title">Customization</h3>
+              <p>
+                Make the wait room yours. Customize avatars and furniture while waiting in
+                the room. Adding personal status and update it to the late people. Costume
+                settings to keep your privacy and preferences.
+              </p>
+            </div>
+            <figure class="feature-media feature-media--motion feature-media--device">
+              <video class="feature-motion" autoplay muted loop playsinline preload="metadata"
+                     poster="assets/img/wait-room-3-phone-poster.jpg" width="570" height="1100">
+                <source src="assets/img/wait-room-3-phone.mp4" type="video/mp4">
+              </video>
+              <img class="feature-media-fallback" src="assets/img/wait-room-3-phone-poster.jpg"
+                   alt="Screen recording: swiping through the Wait Room's set-status, set-furniture and settings screens." width="570" height="1100" loading="lazy" decoding="async">
+            </figure>
+          </section>
+
+          <section class="feature reveal">
+            <div class="feature-body">
+              <h3 class="feature-title">Friendly Nudges</h3>
+              <p>
+                Playful nudges of your avatar pop up on whatever current pages the late
+                people are at. A friendly and interesting reminder make staying in sync
+                effortless and almost non-invasive.
+              </p>
+            </div>
+            <figure class="feature-media feature-media--motion feature-media--device">
+              <video class="feature-motion" autoplay muted loop playsinline preload="metadata"
+                     poster="assets/img/wait-room-4-phone-poster.jpg" width="570" height="1100">
+                <source src="assets/img/wait-room-4-phone.mp4" type="video/mp4">
+              </video>
+              <img class="feature-media-fallback" src="assets/img/wait-room-4-phone-poster.jpg"
+                   alt="Screen recording: a Wait Room avatar nudging in at the edge of the screen while scrolling another app." width="570" height="1100" loading="lazy" decoding="async">
+            </figure>
+          </section>
+
+          <section class="feature reveal">
+            <div class="feature-body">
+              <h3 class="feature-title">Ending the Wait Room</h3>
+              <p>
+                When the group is complete and every members arrive, the post could press
+                “forgive” to forgive the late people and end the wait.
+              </p>
+            </div>
+            <figure class="feature-media feature-media--motion feature-media--card">
+              <video class="feature-motion" autoplay muted loop playsinline preload="metadata"
+                     poster="assets/img/wait-room-5-poster.jpg" width="1100" height="896">
+                <source src="assets/img/wait-room-5.webm" type="video/webm">
+                <source src="assets/img/wait-room-5.mp4" type="video/mp4">
+              </video>
+              <img class="feature-media-fallback" src="assets/img/wait-room-5-poster.jpg"
+                   alt="Screen recording: the wait room fills to 4/4, confetti bursts over “Hooray! Everyone is here.”, and the Forgive button appears."
+                   width="1100" height="896" loading="lazy" decoding="async">
+            </figure>
+          </section>
+
+          <section class="feature reveal">
+            <div class="feature-body">
+              <h3 class="feature-title">Lateness Annual Wrap</h3>
+              <p>
+                We turn everyday delays into data you can laugh about and share.
+                The wrap shows how many hours you are late within a year, most patient
+                friend who arrives early all the time, and the worst day that you are late
+                for the longest time. Still, the feature means to be playful and
+                non-offensive, but give you a little reminder to be better next year.
+              </p>
+            </div>
+            <figure class="feature-media">
+              <img src="assets/img/wait-room-6-wrap.png"
+                   alt="“Your Year in Waiting” recap card showing total tardiness, most patient friend and worst day."
+                   width="484" height="1014" loading="lazy" decoding="async">
+            </figure>
+          </section>
+
+        </div>
+      </section>
+
+      <nav class="page-nav" aria-label="Project navigation">
+        <a class="page-nav-back" href="index.html#work">
+          <span class="arrow" aria-hidden="true">←</span> All work
+        </a>
+        <a class="page-nav-next" href="keep-pennsylvania-beautiful.html">
+          <span class="page-nav-eyebrow">Next project</span>
+          <span class="page-nav-name">Keep Pennsylvania Beautiful</span>
+        </a>
+      </nav>
+
+    </div>
+
+  </article>
+
+</main>
+
+<hr class="rule">
+
+<footer class="site-footer">
+  <div class="wrap">
+    <h2 class="visually-hidden">Contact</h2>
+    <div class="footer-line">
+      <span class="footer-sig">Emily Zhang, <span data-year>2026</span></span>
+      <nav class="footer-links" aria-label="Contact">
+        <a class="footer-link" href="mailto:yunhanzh@andrew.cmu.edu">Email</a>
+        <a class="footer-link" href="https://www.linkedin.com/in/yunhan-zhang-52885b339" target="_blank" rel="noopener">Linkedin</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>
