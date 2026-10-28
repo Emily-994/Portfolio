@@ -282,6 +282,22 @@ content wrapper (a stack with `margin-top`), not from section padding; to add a 
 just add it and it will sit one major gap below the previous block. To change the feel of
 all three pages at once, edit the five `--gap-*` values.
 
+### Scaling on large screens
+
+The design is built in `rem`, so the page's root font size is the one dial that scales
+everything. `html { font-size: clamp(100%, 1.1111vw, 200%) }` keeps it at the browser's own
+size up to a 1440px viewport (so laptops, tablets and phones are exactly as designed), then
+grows in step with the screen: 1.1111vw is exactly 16px at 1440. Type, padding, gaps, the
+header and the layout all stretch together, e.g. at 1920 everything is 1.333x (content 1627px
+wide, 85% of the screen; the hero name 160px) and at 2560 it is 1.778x. Past a 2880px viewport
+the root stops at 200%.
+
+For this to hold, widths and sizes must not be fixed in pixels: every `clamp()` cap that used
+to be in `px` (content width, the hero cut-out, project row height, the rabbits, the browser
+frame, the About portrait) is now in `rem` (the px value divided by 16), which is identical at
+the default root size. **When you add a size, write it in rem**, or it will stay small on a big
+screen. Media queries stay in px: they describe the screen, not the design.
+
 ### Layout
 
 - `--wrap`: `min(1220px, 88vw)` — the main content column.

@@ -46,8 +46,8 @@
   --fs-micro:   0.6875rem;                            /* 11px — tags, eyebrows */
 
   /* Layout */
-  --wrap:   min(1220px, 88vw);
-  --wrap-n: min(820px, 88vw);   /* narrow measure for case-study prose */
+  --wrap:   min(76.25rem, 88vw);          /* 1220px at the default root size */
+  --wrap-n: min(51.25rem, 88vw);   /* narrow measure for case-study prose (820px) */
   --gutter: clamp(1.25rem, 4vw, 3rem);
 
   /* Header: a 64px bar that stays pinned for the whole visit. The lift is extra
@@ -81,6 +81,13 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
+  /* The whole design is built in rem, so the root size is the one dial that scales it.
+     Up to a 1440px viewport it is the browser's own size (100%, 16px by default), so
+     nothing changes on laptops, tablets or phones. Past 1440 it grows in step with the
+     screen (1.1111vw is exactly 16px at 1440), which stretches the type, spacing, header
+     and layout together instead of leaving a 1440px design floating in a wide window.
+     Capped at 200% so a very large display does not scale without limit. */
+  font-size: clamp(100%, 1.1111vw, 200%);
   scroll-behavior: smooth;
   scroll-padding-top: var(--header-bar);   /* in-page jumps (WORK) land below the pinned bar */
   -webkit-text-size-adjust: 100%;
@@ -190,7 +197,7 @@ ul, ol { list-style: none; padding: 0; }
 .nav-home { display: inline-flex; align-items: center; }
 .house {
   display: block;
-  height: clamp(20px, 1.7vw, 25px);
+  height: clamp(1.25rem, 1.7vw, 1.5625rem);
   aspect-ratio: 141 / 223;
   background: currentColor;
   -webkit-mask: var(--doodle-house) center / contain no-repeat;
@@ -216,7 +223,7 @@ ul, ol { list-style: none; padding: 0; }
    shared 7:5 split (see --split), so the copy lines up with the project rows' copy. */
 .hero {
   --cue-room: clamp(4rem, 10vh, 5.5rem);          /* keeps the copy clear of the cue */
-  --fig-w:    clamp(84px, 10vw, 150px);           /* the cut-out; ~a quarter of the name's width */
+  --fig-w:    clamp(5.25rem, 10vw, 9.375rem);           /* the cut-out; ~a quarter of the name's width */
   position: relative;
   display: grid;
   grid-template-columns: var(--split);
@@ -468,7 +475,7 @@ ul, ol { list-style: none; padding: 0; }
 }
 
 .project {
-  --row-h: clamp(300px, 29vw, 430px);   /* shortest a row gets; copy may make it taller */
+  --row-h: clamp(18.75rem, 29vw, 26.875rem);   /* shortest a row gets; copy may make it taller */
   position: relative;                   /* anchors the stretched link */
   display: grid;
   grid-template-columns: var(--split);
@@ -668,7 +675,7 @@ ul, ol { list-style: none; padding: 0; }
    top, so top:0 puts the rabbit's own top exactly on the page edge */
 .nudge--scratch {
   --rot: -3deg;
-  width: clamp(54px, 5.2vw, 74px);
+  width: clamp(3.375rem, 5.2vw, 4.625rem);
   top: 0; left: 31%;
   animation-delay: 0.3s;
 }
@@ -691,7 +698,7 @@ ul, ol { list-style: none; padding: 0; }
    stay on the edge at every width. */
 .nudge--fume {
   --rot: 2deg;
-  width: clamp(52px, 5vw, 70px);
+  width: clamp(3.25rem, 5vw, 4.375rem);
   bottom: 100%; left: 56%;
   --shift: 4%;              /* its own feet overlap the band's edge */
   animation-delay: 1.5s;
@@ -728,7 +735,7 @@ ul, ol { list-style: none; padding: 0; }
 /* 3 — leans in past the right edge, just below the band */
 .nudge--wave {
   --rot: -7deg;
-  width: clamp(80px, 7.4vw, 112px);
+  width: clamp(5rem, 7.4vw, 7rem);
   /* stands on the right edge of the screen. Its containing block is the band,
      which is --wrap wide and centred, so this reaches back out to the viewport:
      half the difference between the band and the window. */
@@ -785,7 +792,7 @@ ul, ol { list-style: none; padding: 0; }
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(1rem, 2.4vw, 2rem);
-  max-width: 760px;
+  max-width: 47.5rem;
   margin-top: clamp(1.75rem, 3.4vw, 2.75rem);
 }
 .meta dt {
@@ -1082,8 +1089,8 @@ ul, ol { list-style: none; padding: 0; }
 .fold-icon {
   position: relative;
   flex: none;
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   color: var(--red);
 }
 .fold-icon::before,
@@ -1153,7 +1160,7 @@ ul, ol { list-style: none; padding: 0; }
 }
 .browser-dots { display: flex; gap: 0.4rem; }
 .browser-dots i {
-  width: 10px; height: 10px; border-radius: 50%;
+  width: 0.625rem; height: 0.625rem; border-radius: 50%;
   background: #C9C7BE;
 }
 .browser-url {
@@ -1163,11 +1170,11 @@ ul, ol { list-style: none; padding: 0; }
   letter-spacing: 0.04em;
   color: var(--ink-soft);
   /* keeps the dots' width from shifting the url off centre */
-  margin-right: calc(3 * 10px + 2 * 0.4rem);
+  margin-right: calc(3 * 0.625rem + 2 * 0.4rem);
 }
 
 .browser-view {
-  height: clamp(420px, 64vh, 760px);
+  height: clamp(26.25rem, 64vh, 47.5rem);
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
@@ -1190,7 +1197,7 @@ ul, ol { list-style: none; padding: 0; }
 
 .bulb {
   flex: 0 0 auto;
-  width: clamp(88px, 8.4vw, 132px);
+  width: clamp(5.5rem, 8.4vw, 8.25rem);
   height: auto;
   margin-inline: auto clamp(1rem, 4vw, 3.5rem);
   opacity: 0;
@@ -1373,7 +1380,7 @@ ul, ol { list-style: none; padding: 0; }
    viewport changes instead of the photo growing with it. */
 .about-grid {
   display: grid;
-  grid-template-columns: minmax(0, 460px) 1fr;
+  grid-template-columns: minmax(0, 28.75rem) 1fr;
   gap: clamp(2rem, 4vw, 4rem);
   align-items: center;   /* photo and writing balanced on one centre line */
   padding: clamp(2.5rem, 6vw, 5.5rem) 0 clamp(3rem, 7vw, 6rem);
@@ -1609,7 +1616,7 @@ ul, ol { list-style: none; padding: 0; }
   .hero-title { font-size: clamp(3.25rem, 13vw, 6rem); }
   .hero-body { justify-self: center; text-align: center; padding-left: 0; max-width: 34rem; }
   .about-grid { grid-template-columns: 1fr; gap: clamp(1.75rem, 5vw, 2.75rem); }
-  .portrait-block { max-width: 460px; }
+  .portrait-block { max-width: 28.75rem; }
   .meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
