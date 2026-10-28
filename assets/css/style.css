@@ -16,6 +16,7 @@
   --olive:      #CFCCAD;  /* project card panels */
   --lime:       #E8F19A;  /* image panels on case-study pages */
   --rule:       #C9C6B4;  /* hairlines and borders */
+  --blue:       #2F6EB9;  /* the home hero's tagline, sampled from the sketch */
 
   /* Type */
   /* TWO FACES, following ziaoh.com's system exactly.
@@ -49,6 +50,20 @@
   --wrap-n: min(820px, 88vw);   /* narrow measure for case-study prose */
   --gutter: clamp(1.25rem, 4vw, 3rem);
 
+  /* Header: a 64px bar that stays pinned for the whole visit. The lift is extra
+     room above the nav at the very top of the page; the sticky offset below is
+     negative by exactly that amount, so it scrolls away and only the bar stays. */
+  /* One grid for the whole home page. Everything sits in --wrap (header, hero, rule,
+     project rows, footer), and the hero and every project row split that width the
+     same way: 7 of 12 columns for the picture / name, 5 of 12 for the words. --card-pad
+     is the inset of those words from their column edge, used by both, so the hero's copy
+     and each project's copy start on the same vertical line. */
+  --split:    7fr 5fr;
+  --card-pad: clamp(1.5rem, 3.4vw, 2.75rem);
+
+  --header-bar:  4rem;
+  --header-lift: clamp(0.5rem, 2.2vw, 2rem);
+
   /* Emily's own doodles, sliced from assets/doodling/Untitled_Artwork.png.
      They are used as masks rather than plain images so they take their colour
      from the page — her ink is already exactly --red, and the house needs to
@@ -67,6 +82,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: var(--header-bar);   /* in-page jumps (WORK) land below the pinned bar */
   -webkit-text-size-adjust: 100%;
 }
 
@@ -130,28 +146,32 @@ ul, ol { list-style: none; padding: 0; }
 
 /* ---------- 4. Site header / nav ---------- */
 .site-header {
-  position: sticky; top: 0; z-index: 100;
-  padding: clamp(1.5rem, 3.2vw, 2.75rem) 0;
+  /* Always visible. It used to slide away on scroll-down, so the only way back
+     to Home from the foot of a case study was to scroll the whole page up.
+     A negative `top` makes the header "compact" without changing its height (a
+     height change would shift the page under the reader): the lift above the nav
+     scrolls off, and the --header-bar strip below it pins. */
+  position: sticky; top: calc(-1 * var(--header-lift)); z-index: 100;
+  padding-top: var(--header-lift);
   background: color-mix(in srgb, var(--cream) 88%, transparent);
   backdrop-filter: blur(9px);
   -webkit-backdrop-filter: blur(9px);
-  transition: transform 0.45s var(--ease), background 0.3s linear;
+  transition: background 0.3s linear;
 }
-/* Header retracts while scrolling down, returns on scroll up */
-.site-header.is-hidden { transform: translateY(-115%); }
-.site-header.at-top    { background: transparent; backdrop-filter: none; }
+.site-header.at-top { background: transparent; backdrop-filter: none; }
 
 .nav {
   display: flex; align-items: center;
   gap: 1.5rem;
+  min-height: var(--header-bar);
 }
 .nav-group { display: flex; gap: clamp(1.5rem, 3.4vw, 3.5rem); }
-/* keeps the About/Resume group flush right whether or not a Home group precedes it */
+/* keeps the WORK / ABOUT / RESUME group flush right, opposite the Home house */
 .nav-group:last-child { margin-left: auto; }
 
 .nav-link {
   position: relative;
-  font-size: var(--fs-nav);
+  font-size: 1rem;
   letter-spacing: 0.11em;
   text-transform: uppercase;
   text-decoration: none;
@@ -180,84 +200,247 @@ ul, ol { list-style: none; padding: 0; }
 .nav-link:hover, .nav-link:focus-visible { color: var(--red); }
 .nav-link:hover::after,
 .nav-link:focus-visible::after,
-.nav-link[aria-current="page"]::after { transform: scaleX(1); transform-origin: 0 50%; }
-.nav-link[aria-current="page"] { color: var(--red); }
+.nav-link[aria-current]:not([aria-current="false"])::after { transform: scaleX(1); transform-origin: 0 50%; }
+.nav-link[aria-current]:not([aria-current="false"]) { color: var(--red); }
 
 /* ---------- 5. Hero (home) ---------- */
-/* Centred and compact: the paragraphs stack close under the title rather than
-   floating in the middle of the page. */
+/* The hero owns the first screen: header + hero add up to exactly one viewport,
+   with the content centred in it and a "Selected work" cue pinned to its foot. The
+   header is in flow (sticky), so its height is subtracted. `svh` is the *small*
+   viewport height, so a phone's collapsing URL bar never makes it jump; plain
+   `vh` is the fallback for browsers that predate it.
+
+   Two columns, as sketched: Emily on the left (cut-out, name, tagline, stacked and
+   centred on each other), the two lines about her on the right. `align-items: end`
+   sits the last line of copy on the same baseline as the tagline. The columns are the
+   shared 7:5 split (see --split), so the copy lines up with the project rows' copy. */
 .hero {
+  --cue-room: clamp(4rem, 10vh, 5.5rem);          /* keeps the copy clear of the cue */
+  --fig-w:    clamp(84px, 10vw, 150px);           /* the cut-out; ~a quarter of the name's width */
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--split);
+  column-gap: 0;
+  align-items: end;
+  align-content: center;
+  min-height: calc(100vh  - var(--header-bar) - var(--header-lift));
+  min-height: calc(100svh - var(--header-bar) - var(--header-lift));
+  padding: 2rem 0 var(--cue-room);
+}
+
+.hero-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(2rem, 4vw, 3.5rem);
+}
+
+/* delight: the cut-out of Emily, arms up, bobbing above her name. The sketch crops
+   her at the chest, so the bottom quarter is clipped away *on the image itself*
+   (clip-path). The wrapper is exactly the visible part, so it is what takes the
+   hover. Inside it, a rig rocks the picture and the "hi!" speech line together —
+   the line has to stay attached to her mouth while her head swings, so they share
+   one transform. The pivot sits at the cut, so the head swings most. It is already
+   moving when the page paints and never stops, and it does not speed up on hover;
+   hovering her makes her say hi instead. ease-in-out, not --ease, because --ease is
+   an entrance curve that would snap at each turn. */
+.hero-figure-wrap {
+  position: relative;
+  width: var(--fig-w);
+  height: calc(var(--fig-w) * 0.782);   /* 75% of the image's own height */
+}
+.hero-rig {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 100%;
+  animation: bobble 1.6s ease-in-out infinite;
+}
+.hero-figure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: auto;
+  clip-path: inset(0 0 25% 0);
+}
+
+/* "hi!" — drawn from Emily's sketch: a line leaves the right side of her mouth
+   heading right, bends gradually upward through the gap between her hat and her
+   raised arm, and meets the underside of a circle holding the word, just left of its
+   centre and almost vertically. Line, circle and text are one SVG whose units are
+   fractions of her width (viewBox 0 0 100 78.2: x 50, y 25 is her mouth), so the
+   line always starts on the mouth and ends on the circle whatever the screen size.
+   It wears the site's own vocabulary: the thin blue outline of the tag pills, the
+   lighter warm cream as the fill, the display serif italic used for small human
+   notes, in the tagline's blue. On hover the line draws itself out from her mouth,
+   then the circle springs open at its end. Decorative: the wrapper is aria-hidden. */
+.hero-hi {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  overflow: visible;        /* the bubble sits above and to the right of her */
+  pointer-events: none;
+}
+.hero-hi-line {
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-dasharray: 1 2;    /* pathLength is 1: one dash as long as the whole line */
+  stroke-dashoffset: 1;     /* ...pushed out of sight until she is hovered */
+  opacity: 0;               /* a round cap would otherwise leave a dot at the mouth */
+  transition: stroke-dashoffset 0.22s var(--ease), opacity 0.05s linear;
+}
+.hero-hi-bubble {
+  transform-box: view-box;
+  transform-origin: 75.2px 0.7px;    /* where the line meets the circle */
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 0.12s var(--ease),
+              transform 0.12s var(--ease);
+}
+.hero-hi-bubble circle {
+  fill: var(--cream-warm);
+  stroke: var(--blue);
+  stroke-width: 1.2;
+}
+.hero-hi-bubble text {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 15px;          /* user units, so it scales with her: ~22px at 1440 */
+  fill: var(--blue);
+}
+.hero-figure-wrap:hover .hero-hi-line {
+  stroke-dashoffset: 0;
+  opacity: 1;
+}
+.hero-figure-wrap:hover .hero-hi-bubble {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.2s var(--ease) 0.16s,
+              transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.16s;   /* waits for the line */
+}
+
+/* one continuous rock: left, up, right, up, back to left. 0% and 100% hold the
+   same pose so the loop closes on itself with no seam. */
+@keyframes bobble {
+  0%, 100% { transform: translateY(0)    rotate(-6deg); }
+  25%      { transform: translateY(-9%)  rotate(0deg); }
+  50%      { transform: translateY(0)    rotate(6deg); }
+  75%      { transform: translateY(-9%)  rotate(0deg); }
 }
 
 .hero-title {
-  /* sans here, serif in the paragraphs below — as drawn in the mockup, and the
-     same split ziaoh uses on its case-study pages (sans H1, serif body lines) */
-  font-size: var(--fs-display);
-  font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: -0.015em;   /* large sizes get NEGATIVE tracking */
-  text-wrap: balance;
+  /* the biggest, boldest thing on the site. Source Sans 3 Bold: the one place a
+     bold weight is used, because it is the one place that has to be found first */
+  font-size: clamp(3.25rem, 8.35vw, 7.5rem);   /* ~120px at 1440: the name runs ~43% of the width, as sketched */
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;   /* large sizes get NEGATIVE tracking */
   color: var(--red);
-  margin-bottom: clamp(0.75rem, 1.6vw, 1.35rem);
+  white-space: nowrap;
 }
 
 /* delight: each word rises into place on load */
 .hero-title .word {
   display: inline-block;
   opacity: 0;
-  transform: translateY(0.5em);
+  transform: translateY(0.35em);
   animation: rise 0.85s var(--ease) forwards;
 }
 @keyframes rise { to { opacity: 1; transform: none; } }
 
-/* delight: a cut-out of Emily, arms up, in place of the old 👋. The wrapper
-   keeps the .word rise animation; the image inside carries the bobble, so the
-   two no longer fight over the same animation property. */
-.wave-word {
-  display: inline-block;
-  line-height: 0;              /* no strut — the image sets the box height */
-  vertical-align: -0.22em;     /* the cut-out is taller than a glyph, so it hangs
-                                  below the baseline to sit level with the caps */
+/* design . product . fine arts — in the sketch's blue, the only blue on the page */
+.hero-tagline {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: 0 clamp(0.6rem, 1.4vw, 1.25rem);
+  margin-top: clamp(0.35rem, 1vw, 0.9rem);
+  font-size: clamp(1.125rem, 1.9vw, 1.75rem);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  color: var(--blue);
+  opacity: 0;
+  animation: rise 0.85s var(--ease) 0.55s forwards;
+  transform: translateY(0.5em);
 }
-.wave-img {
-  display: block;
-  height: 1.5em;
-  width: auto;
-  transform-origin: 50% 92%;   /* pivots near the feet, so the head swings most */
-  /* no delay and no rest beat: it is already bobbling when the page paints, and
-     it never stops. ease-in-out, not --ease, because --ease is an entrance curve
-     that would snap at each turn; this one decelerates into every reversal. */
-  animation: bobble 1.6s ease-in-out infinite;
-}
-/* hovering the title doubles the tempo — the same hello, more excited */
-.hero-title:hover .wave-img { animation-duration: 0.8s; }
-
-/* one continuous rock: left, up, right, up, back to left. 0% and 100% hold the
-   same pose so the loop closes on itself with no seam. */
-@keyframes bobble {
-  0%, 100% { transform: translateY(0)    rotate(-6deg); }
-  25%      { transform: translateY(-7%)  rotate(0deg); }
-  50%      { transform: translateY(0)    rotate(6deg); }
-  75%      { transform: translateY(-7%)  rotate(0deg); }
+/* the separators are drawn dots, not full stops: a full stop sits on the baseline and
+   reads as punctuation, a centred dot reads as a divider. Sized in em so it stays in
+   proportion to the words at every width — small enough to stay quiet beside them. */
+.hero-tagline .dot {
+  flex: none;
+  align-self: center;
+  width: 0.2em;
+  height: 0.2em;
+  border-radius: 50%;
+  background: currentColor;
 }
 
-/* 680px, not wider: Instrument Serif is narrow, so a wider box lets the first
-   paragraph collapse onto a single long line at some widths. This measure keeps
-   both paragraphs at two balanced lines across the whole laptop range. */
-.hero-body { max-width: min(680px, 100%); margin-inline: auto; }
-
+/* The copy is left-aligned in its own column, set larger than before: this is the
+   text the hero exists to deliver, so it reads at sentence size rather than caption
+   size. Instrument Serif is narrow, so the measure is capped to keep the lines
+   short and the two paragraphs reading as two clear thoughts. */
+.hero-body {
+  padding-left: var(--card-pad);   /* same inset as .project-body: one vertical text line */
+  opacity: 0;
+  transform: translateY(0.5em);
+  animation: rise 0.85s var(--ease) 0.75s forwards;
+}
 .hero-lead {
   font-family: var(--font-display);
-  font-size: var(--fs-lead);
-  line-height: 1.5;           /* reading text always 1.5–1.6 */
-  /* Even out the line lengths instead of filling each line greedily, so no line
-     is left holding one or two orphaned words. Ignored by older browsers, which
-     simply fall back to normal wrapping. */
+  font-size: clamp(1.375rem, 2.1vw, 1.875rem);
+  line-height: 1.3;
+  /* `balance`, not `pretty`: pretty only rescues a lone last word, which left the
+     first paragraph's middle line ~160px longer than its last. Balance evens every
+     line of a paragraph, so each reads as one tidy block. */
   text-wrap: balance;
 }
-.hero-lead + .hero-lead { margin-top: 1.35rem; }
+.hero-lead + .hero-lead { margin-top: 1.5em; }
+/* the typeface's hyphen carries wide side-bearings, so "Human-Computer" read as
+   "Human - Computer"; pull the sides in */
+.hero-lead .hy { margin-inline: -0.14em; }
+
+/* "Selected work ↓": the one-click route from the opening straight to the
+   projects. It arrives after the title has finished rising, and the arrow bobs
+   gently so it reads as something to press. */
+.scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.25rem, 3.5vh, 2.25rem);
+  translate: -50% 0;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.75rem;
+  font-size: var(--fs-nav);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink-soft);
+  opacity: 0;
+  transform: translateY(0.5em);
+  animation: rise 0.85s var(--ease) 1.3s forwards;
+  transition: color 0.28s var(--ease);
+}
+.scroll-cue:hover, .scroll-cue:focus-visible { color: var(--red); }
+.scroll-cue-arrow {
+  color: var(--red);
+  font-size: 1.25rem;
+  line-height: 1;
+  letter-spacing: 0;
+  animation: cue-bob 1.8s ease-in-out 2.2s infinite;
+}
+@keyframes cue-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(6px); }
+}
 
 /* ---------- 6. Rules ---------- */
 /* The section lines run edge-to-edge with the project panels — same width as
@@ -269,114 +452,160 @@ ul, ol { list-style: none; padding: 0; }
   margin: 0 auto;
 }
 
-/* ---------- 7. Work grid (home) ---------- */
-.work { padding: clamp(3.5rem, 8vw, 7rem) 0 clamp(3rem, 7vw, 6rem); }
+/* ---------- 7. Work list (home) ---------- */
+/* The three projects are stacked as wide rows, one per screen-ish, instead of a
+   3-up grid: each gets room for its image, a line of context and its tags, and
+   there is one obvious thing to read next. The list is the same width as the header,
+   hero and footer (--wrap), so its edges line up with theirs. */
+.work { padding: clamp(2.5rem, 5vw, 4.5rem) 0 clamp(3rem, 7vw, 6rem); }
 
-/* Equal thirds, and equal panels. The three source images have different ratios
-   (1.24, 1.61, 1.55), so cards sized to their own image came out three different
-   heights and pushed each name to a different line — as did the downward offset
-   the middle card used to carry. One shared ratio for all three puts every panel
-   on the same footprint and every name on the same baseline. */
-.work-grid {
+.project-list {
+  --list:  var(--wrap);
+  width: var(--list);
+  margin-inline: auto;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(0.9rem, 1.8vw, 1.5rem);
-  align-items: start;
+  gap: clamp(2rem, 5vw, 4.5rem);   /* room between rows so each reads as its own piece, and the hover lift never crowds the next */
 }
 
-/* the label is a sibling of the <a>, not a child, so hovering either the card
-   or the label lights up both */
-.work-item { position: relative; }
-
-.card {
-  position: relative;
+.project {
+  --row-h: clamp(300px, 29vw, 430px);   /* shortest a row gets; copy may make it taller */
+  position: relative;                   /* anchors the stretched link */
   display: grid;
-  place-items: center;
-  text-decoration: none;
-  background: var(--olive);
-  padding: 9%;              /* % of card width — matches the design's inset */
-  /* Each card's height is derived from its own image so the olive frame reads
-     as an even 9% band on all four sides:  height/width = 0.82/imageRatio + 0.18
-     Set per card below; this is the fallback. */
-  /* One ratio for all three. It sits between the images' own ratios, so each is
-     contained with a modest olive band — image 1 gains a little at the sides,
-     images 2 and 3 a little above and below — instead of each card resizing
-     itself and breaking the row. */
-  aspect-ratio: 1 / 0.78;
-  border-radius: 12px;
+  grid-template-columns: var(--split);
+  min-height: var(--row-h);
   overflow: hidden;
+  border-radius: 12px;
+  /* The copy panel is the page's own colour, so a row is defined by its picture
+     and a soft shadow rather than by an outline. */
+  background: var(--cream);
+  box-shadow: 0 5px 18px rgba(43, 43, 30, 0.13), 0 1px 3px rgba(43, 43, 30, 0.08);
   transition: transform 0.55s var(--ease), box-shadow 0.55s var(--ease);
 }
+.project:hover,
+.project:focus-within {
+  transform: translateY(-6px);
+  box-shadow: none;        /* the red stroke below replaces the shadow as the feedback */
+}
 
-.card-media {
+/* Hover / keyboard-focus feedback: a red stroke drawn over the card's edge, inside
+   it, so it frames the picture and the copy together. 2px is the weight that holds
+   against a 1080px-wide card without shouting — the nav underline is 1.5px and the
+   tag pills 1px, so this reads as the loudest line on the page, which is the point. */
+.project::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border: 2px solid var(--red);
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;     /* never intercepts the click on the stretched link */
+  transition: opacity 0.35s var(--ease);
+}
+.project:hover::before,
+.project:focus-within::before { opacity: 1; }
+
+/* The picture takes the whole left side, edge to edge. It is absolutely placed in
+   its column so it never sets the row's height — the copy does — and it is cropped
+   to cover. Cards that came with their own frame (Wait Room) are cropped to their
+   artwork in the file, so no rim or rounded corner is left to be cut off. */
+.project-media {
+  position: relative;
+  overflow: hidden;       /* clips the hover zoom */
+}
+.project-media img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;   /* never crop — these are finished, composed images */
-  /* No radius or shadow here any more: the artwork carries its own rounded
-     frame and shadow, and its transparent corners are composited onto the olive
-     panel colour at export time, so an added rectangular shadow would trace a
-     box the viewer cannot see the edges of. */
+  object-fit: cover;
   transition: transform 0.6s var(--ease);
 }
+.project:hover .project-media img,
+.project:focus-within .project-media img { transform: scale(1.03); }
 
-/* Wait Room's artwork (1.24) is narrower than the padded content box (1.37), so
-   `contain` sized it by height and it stood taller than the other two, which are
-   sized by width. Narrowing its box to 78% flips it to being sized by width too,
-   landing it on the same height as its neighbours (78% x 0.82W / 1.24 ≈ 0.52W),
-   scaled down whole rather than cropped. The grid's place-items:center keeps the
-   narrower box centred in the olive panel. */
-.card-media--tall { width: 78%; }
-
-.work-item:hover .card,
-.card:focus-visible {
-  transform: translateY(-7px);
-  box-shadow: 0 24px 46px -30px rgba(43, 43, 30, 0.7);
-}
-.work-item:hover .card-media,
-.card:focus-visible .card-media { transform: scale(1.03); }
-
-/* Names and keywords sit permanently under each card, ziaoh-style. The hover
-   no longer swaps the panel's contents — it just lifts the card and underlines
-   the name, so nothing is hidden from anyone who never hovers. */
-.card-label {
-  display: grid;
-  justify-items: start;
-  gap: 0.55rem;
-  padding-top: 0.9rem;
+.project-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: var(--card-pad);
 }
 
-.card-name {
-  text-wrap: balance;
+.project-meta {
+  font-size: var(--fs-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.project-name {
   font-family: var(--font-display);
-  font-size: clamp(1.125rem, 1.5vw, 1.375rem);
-  line-height: 1.2;
+  font-weight: 400;
+  font-size: clamp(1.75rem, 2.7vw, 2.25rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
   color: var(--red);
-  position: relative;
 }
-/* the name underlines on hover — the click affordance the overlay used to carry */
-.card-name::after {
-  content: ""; position: absolute; left: 0; bottom: -2px;
-  width: 100%; height: 1px; background: var(--red);
-  transform: scaleX(0); transform-origin: 0 50%;
-  transition: transform 0.42s var(--ease);
+/* The title is the real link; its ::after stretches to cover the whole row, so
+   the entire card is one click target and there is a single tab stop per project. */
+.project-link {
+  text-decoration: none;    /* deliberately not positioned, so ::after sizes to .project */
+  color: inherit;
 }
-.work-item:hover .card-name::after,
-.work-item:focus-within .card-name::after { transform: scaleX(1); }
+.project-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.project-link:focus-visible { outline: none; }   /* the card's red stroke is the focus ring */
 
-.card-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.project-blurb {
+  max-width: 34ch;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 
 .tag {
   border: 1px solid var(--red);
   border-radius: 999px;
   padding: 0.25rem 0.7rem;
-  font-size: var(--fs-micro);
+  font-size: var(--fs-label);
   line-height: 1.5;
   letter-spacing: 0.02em;
   color: var(--red);
   white-space: nowrap;
   transition: background 0.35s var(--ease), color 0.35s var(--ease);
 }
-.work-item:hover .tag { background: var(--red); color: var(--cream); }
+.project:hover .tag, .project:focus-within .tag { background: var(--red); color: var(--cream); }
+
+/* "View case study →" — a text link in the nav's voice rather than a filled
+   button: three solid buttons in a stack would outweigh the work itself. */
+.project-cta {
+  position: relative;
+  margin-top: 0.4rem;
+  padding-bottom: 3px;
+  font-size: var(--fs-nav);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink);
+  transition: color 0.28s var(--ease);
+}
+.project-cta .arrow { display: inline-block; transition: transform 0.4s var(--ease); }
+.project-cta::after {
+  content: ""; position: absolute; left: 0; bottom: 0;
+  width: 100%; height: 1.5px; background: var(--red);
+  transform: scaleX(0); transform-origin: 100% 50%;
+  transition: transform 0.42s var(--ease);
+}
+.project:hover .project-cta, .project:focus-within .project-cta { color: var(--red); }
+.project:hover .project-cta::after, .project:focus-within .project-cta::after { transform: scaleX(1); transform-origin: 0 50%; }
+.project:hover .project-cta .arrow, .project:focus-within .project-cta .arrow { transform: translateX(5px); }
 
 /* ---------- 8. Page head (inner pages) ---------- */
 .page-head {
@@ -1234,67 +1463,70 @@ ul, ol { list-style: none; padding: 0; }
 .star-list li:hover::before { transform: rotate(90deg) scale(1.15); }
 
 /* ---------- 14. Project navigation ---------- */
-/* Two destinations rather than one bare arrow: a way back to the index, and a
-   named next project so the reader knows what they are committing to. */
+/* One thing at the foot of a case study: a compact button to the next project, right
+   aligned at the bottom of the page. The way back to the work list is the WORK link in
+   the pinned header, so a second "All work" here was redundant.
+   It borrows the site's pill shape; the label and the name sit on one line, and on a
+   hover it fills with the site red the way the tag pills do. */
 .page-nav {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1.5rem 2rem;
-  flex-wrap: wrap;
-  border-top: 1px solid var(--rule);
-  margin-top: clamp(2.5rem, 5vw, 4rem);
-  padding-top: clamp(1.25rem, 2.5vw, 2rem);
-  /* keeps this band clear of the footer's rule below it */
+  justify-content: flex-end;
   padding-bottom: clamp(2rem, 4vw, 3.5rem);
 }
 
-.page-nav-back {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  font-size: var(--fs-nav);
-  letter-spacing: 0.02em;
-  text-decoration: none;
-  color: var(--ink-soft);
-  transition: color 0.3s var(--ease);
-}
-.page-nav-back .arrow { transition: transform 0.35s var(--ease); }
-.page-nav-back:hover, .page-nav-back:focus-visible { color: var(--red); }
-.page-nav-back:hover .arrow { transform: translateX(-4px); }
-
 .page-nav-next {
-  display: grid;
-  justify-items: end;
-  gap: 0.25rem;
-  text-align: right;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.85rem;
+  max-width: 100%;
+  padding: 0.8rem 1.5rem 0.85rem 1.6rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--cream-warm);
   text-decoration: none;
-  max-width: 60%;
+  transition: background 0.35s var(--ease), border-color 0.35s var(--ease),
+              transform 0.45s var(--ease);
 }
+
 .page-nav-eyebrow {
   font-size: var(--fs-label);
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  white-space: nowrap;
   color: var(--red);
-}
-.page-nav-name {
-  position: relative;
-  font-family: var(--font-display);
-  font-size: clamp(1.375rem, 2.2vw, 1.875rem);
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  text-wrap: balance;
   transition: color 0.35s var(--ease);
 }
-.page-nav-name::after {
-  content: "";
-  position: absolute; left: 0; right: 0; bottom: -3px;
-  height: 1px; background: var(--red);
-  transform: scaleX(0); transform-origin: 100% 50%;
-  transition: transform 0.42s var(--ease);
+.page-nav-name {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  transition: color 0.35s var(--ease);
 }
+.page-nav-name .arrow { color: var(--red); transition: transform 0.4s var(--ease), color 0.35s var(--ease); }
+
+.page-nav-next:hover,
+.page-nav-next:focus-visible {
+  background: var(--red);
+  border-color: var(--red);
+}
+.page-nav-next:hover .page-nav-eyebrow,
+.page-nav-next:focus-visible .page-nav-eyebrow,
 .page-nav-next:hover .page-nav-name,
-.page-nav-next:focus-visible .page-nav-name { color: var(--red); }
-.page-nav-next:hover .page-nav-name::after,
-.page-nav-next:focus-visible .page-nav-name::after { transform: scaleX(1); transform-origin: 0 50%; }
+.page-nav-next:focus-visible .page-nav-name,
+.page-nav-next:hover .arrow,
+.page-nav-next:focus-visible .arrow { color: var(--cream); }
+.page-nav-next:hover .arrow { transform: translateX(5px); }
+
+/* on a phone the label and the name will not fit on one line: stack them, and trade
+   the full pill for a rounded rectangle so two lines do not look squashed */
+@media (max-width: 560px) {
+  .page-nav-next { flex-direction: column; align-items: flex-start; gap: 0.2rem; border-radius: 18px; }
+}
 
 /* ---------- 15. Footer ---------- */
 .site-footer { padding: 0 0 clamp(2.5rem, 5vw, 4.5rem); }
@@ -1318,6 +1550,20 @@ ul, ol { list-style: none; padding: 0; }
 }
 
 .footer-links { display: flex; align-items: baseline; }
+
+/* site links, contact links and Back to top share one right-hand cluster; the
+   groups are spaced apart rather than dotted together, so wrapping on a phone
+   never strands a middot at the start of a line */
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 0.6rem clamp(1.25rem, 3vw, 2.5rem);
+}
+.footer-top { color: var(--ink-soft); }
+.footer-top .arrow { display: inline-block; transition: transform 0.4s var(--ease); }
+.footer-top:hover .arrow, .footer-top:focus-visible .arrow { transform: translateY(-3px); }
 
 .footer-link {
   position: relative;
@@ -1358,6 +1604,10 @@ ul, ol { list-style: none; padding: 0; }
 
 /* ---------- 17. Responsive ---------- */
 @media (max-width: 900px) {
+  /* one column: Emily, then what she does, all centred */
+  .hero { grid-template-columns: 1fr; row-gap: clamp(1.75rem, 5vw, 2.5rem); align-items: start; }
+  .hero-title { font-size: clamp(3.25rem, 13vw, 6rem); }
+  .hero-body { justify-self: center; text-align: center; padding-left: 0; max-width: 34rem; }
   .about-grid { grid-template-columns: 1fr; gap: clamp(1.75rem, 5vw, 2.75rem); }
   .portrait-block { max-width: 460px; }
   .meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1366,16 +1616,18 @@ ul, ol { list-style: none; padding: 0; }
 @media (max-width: 760px) {
   :root { --wrap: 88vw; }
 
+  /* she is only ~84px wide on a phone, which would leave "hi!" at ~10px. Scale the
+     whole speech drawing up from the point where the line leaves her mouth, so it
+     stays attached and the word reaches ~18px. */
+  .hero-hi { transform: scale(1.45); transform-origin: 59.5% 30%; }
+
   /* a phone is too narrow to hold it on one line at any readable size */
   .one-line { white-space: normal; font-size: var(--fs-body); }
 
-  .work-grid { grid-template-columns: 1fr; gap: clamp(1.25rem, 5vw, 2rem); }
-  /* One column: nothing to line up with, so each card goes back to its own
-     image's height rather than banding olive around a shared ratio. */
-  .card { aspect-ratio: auto; }
-  .card-media { height: auto; }
-  /* no shared row height to match at one column */
-  .card-media--tall { width: 100%; }
+  /* one column: the picture sits on top of the copy, as on the reference */
+  .project { grid-template-columns: 1fr; min-height: 0; }
+  .project-media { aspect-ratio: 16 / 10; }
+  .project-blurb { max-width: none; }
 
   .intro-grid { grid-template-columns: 1fr; }
 
@@ -1390,17 +1642,157 @@ ul, ol { list-style: none; padding: 0; }
   /* these two hang off the lime band's top and right edges, which on a phone
      puts them over the title and past the viewport — no room, so they sit out */
   .nudge--fume, .nudge--wave { display: none; }
-  /* The scratcher keeps the desktop's left:31%. That lands it in the empty gap
-     between the home icon and the About/Resume pair, which is the one place in
-     the header with no text under it. `right: 3%` used to park it directly on
-     top of "Resume". Its feet (94px) also stop short of the eyebrow below. */
-  .nudge--scratch { left: 31%; right: auto; }
+  /* The scratcher stands in the empty gap between the home icon and the
+     Work/About/Resume group, the one place in the header with no text under it.
+     With 16px nav links that gap is ~110px wide, so it sits at 17%.
+     Its feet (94px) also stop short of the eyebrow below. */
+  .nudge--scratch { left: 17%; right: auto; }
+
 }
 
 @media (max-width: 460px) {
   .meta { grid-template-columns: 1fr; gap: 1.25rem; }
   .nav-group { gap: 1.15rem; }
 }
+
+/* ---------- 17b. Case-study type scale ---------- */
+/* The three case-study pages share one scale, scoped to `body.case-study` so the home
+   page and About keep the global tokens above untouched. Before this the pages had
+   eight near-identical sizes (40 / 26 / 22 / 19 / 16 / 15 / 13 / 12) and a hole between
+   the 40px title and the 12px "headings": Context, The problem and Features were 12px
+   caps labels while another page's section heading was a 22px serif, so the same job
+   looked different from page to page. Now there are six roles, each used for one job
+   (sizes at a 1440px viewport):
+     title 48 · section heading (H2) 32 · sub-heading (H3) 24 · body 18 ·
+     secondary 16 · label 13
+   Every size is a clamp, so each step shrinks smoothly toward a phone instead of
+   jumping at a breakpoint. */
+.case-study {
+  --cs-title: clamp(2.25rem, 3.4vw, 3rem);          /* 48 */
+  --cs-h2:    clamp(1.625rem, 2.25vw, 2rem);        /* 32 */
+  --cs-h3:    clamp(1.3125rem, 1.7vw, 1.5rem);      /* 24 */
+  --cs-body:  clamp(1.0625rem, 1.25vw, 1.125rem);   /* 17 → 18 */
+  --cs-small: 1rem;                                  /* 16 */
+  --cs-label: 0.8125rem;                             /* 13 */
+}
+
+/* title */
+.case-study .page-title {
+  font-size: var(--cs-title);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+/* section headings: ONE style for every H2, whatever it was before (a 12px caps
+   label here, a 22px serif there). The small caps look survives only where a label is
+   genuinely a label: the meta strip, eyebrows, process pills, "Next project". */
+.case-study .label,
+.case-study .section-title {
+  font-family: var(--font-display);
+  font-size: var(--cs-h2);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  text-transform: none;
+  color: var(--red);
+  margin-bottom: clamp(0.85rem, 1.5vw, 1.25rem);
+}
+
+/* the project's central question reads at heading size, as the hook of the page */
+.case-study .lede { font-size: var(--cs-h2); line-height: 1.25; letter-spacing: -0.015em; }
+
+/* sub-headings */
+.case-study .feature-title { font-size: var(--cs-h3); line-height: 1.2; margin-bottom: 0.85rem; }
+.case-study .fold-title    { font-size: var(--cs-h3); line-height: 1.3; }
+
+/* body copy: everything a visitor actually reads. 18px, a measure of ~66 characters */
+.case-study .prose { max-width: 66ch; }
+/* ...except where the layout already sets the measure (the intro columns) or asks for
+   the full width (a deliberate one-liner). These need three classes to outrank the
+   cap above. */
+.case-study .intro-grid .prose,
+.case-study .prose.prose--wide { max-width: none; }
+.case-study .prose,
+.case-study .bullets li,
+.case-study .numbered li,
+.case-study .feature-body p,
+.case-study .meta dd,
+.case-study .pi-name,
+.case-study .one-line { font-size: var(--cs-body); }
+.case-study .bullets li,
+.case-study .numbered li { line-height: 1.55; }
+.case-study .feature-body p { line-height: 1.6; }
+.case-study .meta dd { line-height: 1.45; }
+
+/* the one-liner used to shrink below body size to avoid wrapping: backwards. It wraps. */
+.case-study .one-line { white-space: normal; }
+
+/* secondary text */
+.case-study .pi-note,
+.case-study .lede-note,
+.case-study .archive figcaption,
+.case-study .note { font-size: var(--cs-small); }
+.case-study .pi-note { line-height: 1.5; }
+
+/* labels: real labels only, floored at 13px (was 11-12) */
+.case-study .eyebrow,
+.case-study .meta dt,
+.case-study .process-pill,
+.case-study .page-nav-eyebrow { font-size: var(--cs-label); }
+.case-study .browser-url { font-size: 0.75rem; }   /* decorative text inside the browser frame */
+
+/* ---------- 17c. Case-study vertical rhythm ---------- */
+/* Spacing between the parts of a case study, scoped to `body.case-study`. It used to
+   come from five unrelated places (section padding, rule margins, the fold's margin, the
+   column gap, the page header's padding) that did not add up: the title band sat ~100px
+   from the first heading, yet the page's own major sections sat only 44px apart, so the
+   top of the page was airier than the sections that matter. Spacing now follows the
+   content hierarchy, one tier per level, and each tier is a token (px at 1440):
+     first   96   title band -> first content
+     major   80   between top-level sections (a heading needs ~2.5x its own height above it)
+     minor   56   stacked sections inside one column (Problem -> Design goals)
+     head    24   a heading -> the content it introduces
+     exit   112   last section -> project navigation
+   A divider (rule or fold) takes half the major gap on each side, so it costs no more
+   space than a plain gap. Nothing inside a section changes. */
+.case-study {
+  --gap-first: clamp(3.5rem, 6.7vw, 6rem);   /* 96 */
+  --gap-major: clamp(3rem, 5.6vw, 5rem);     /* 80 */
+  --gap-minor: clamp(2rem, 3.9vw, 3.5rem);   /* 56 */
+  --gap-head:  clamp(1rem, 1.7vw, 1.5rem);   /* 24 */
+  --gap-exit:  clamp(4rem, 8vw, 7rem);       /* 112 */
+}
+
+/* the page body is a stack: each direct block sits one major gap below the last */
+.case-study .page-head { padding-bottom: 0; }
+.case-study article > div.wrap > :first-child { margin-top: var(--gap-first); }
+.case-study article > div.wrap > * + * { margin-top: var(--gap-major); }
+
+/* dividers: half the gap above, half below */
+.case-study article > div.wrap > .section-break,
+.case-study article > div.wrap > .fold { margin-top: calc(var(--gap-major) / 2); margin-bottom: 0; }
+.case-study article > div.wrap > .section-break + *,
+.case-study article > div.wrap > .fold + * { margin-top: calc(var(--gap-major) / 2); }
+
+.case-study article > div.wrap > .page-nav { margin-top: var(--gap-exit); }
+
+/* sections no longer carry the gap in their own padding: the stack supplies it */
+.case-study .section { padding-top: 0; }
+
+/* minor gap: sections stacked inside one column, and the two-column blocks when they
+   collapse to one column on a tablet or phone */
+.case-study .intro-col > .section + .section { padding-top: var(--gap-minor); }
+.case-study .brief-col { gap: var(--gap-minor); }
+.case-study .intro-grid,
+.case-study .brief-grid { row-gap: var(--gap-minor); }
+
+/* heading -> content, one value. Components that added their own top margin to make
+   up for a small label heading no longer need to. */
+.case-study .label,
+.case-study .section-title { margin-bottom: var(--gap-head); }
+.case-study .features { padding-top: 0; padding-bottom: 0; }
+.case-study .process { margin-top: 0; }
+.case-study .showcase { margin-top: 0; }
 
 /* ---------- 18. Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
@@ -1411,6 +1803,8 @@ ul, ol { list-style: none; padding: 0; }
     transition-duration: 0.001ms !important;
   }
   .hero-title .word { opacity: 1; transform: none; }
+  .hero-tagline, .hero-body { opacity: 1; transform: none; }
+  .scroll-cue { opacity: 1; transform: none; }
   .reveal { opacity: 1; transform: none; }
 }
 

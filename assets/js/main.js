@@ -45,36 +45,18 @@
     }
   }
 
-  /* ---- 3. Header: hide on scroll down, show on scroll up ---- */
+  /* ---- 3. Header: always visible, compacts once the page has scrolled ----
+     It used to retract on scroll down, which meant the only way back to Home
+     from the foot of a long case study was to scroll the whole page up. It now
+     stays put and simply tightens into a thin bar. */
   var header = document.querySelector(".site-header");
   if (header) {
-    var lastY = window.pageYOffset;
-    var ticking = false;
-
-    var onScroll = function () {
-      var y = window.pageYOffset;
-
-      header.classList.toggle("at-top", y < 12);
-
-      if (y > lastY && y > 220) {
-        header.classList.add("is-hidden");
-      } else {
-        header.classList.remove("is-hidden");
-      }
-      lastY = y;
-      ticking = false;
+    // a single class toggle: cheap enough to run on every scroll event
+    var onHeaderScroll = function () {
+      header.classList.toggle("at-top", window.pageYOffset < 12);
     };
-
-    onScroll();
-    window.addEventListener(
-      "scroll",
-      function () {
-        if (ticking) return;
-        ticking = true;
-        window.requestAnimationFrame(onScroll);
-      },
-      { passive: true }
-    );
+    onHeaderScroll();
+    window.addEventListener("scroll", onHeaderScroll, { passive: true });
   }
 
   /* ---- 4. Reading progress bar (case-study pages) ---- */
@@ -90,7 +72,26 @@
     window.addEventListener("resize", updateProgress);
   }
 
-  /* ---- 5. Footer year ---- */
+  /* ---- 5. WORK: underline the nav link while the project grid is on screen ---- */
+  var workLink = document.querySelector('[data-nav="work"]');
+  var workSection = document.getElementById("work");
+  if (workLink && workSection && "IntersectionObserver" in window) {
+    new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            workLink.setAttribute("aria-current", "true");
+          } else {
+            workLink.removeAttribute("aria-current");
+          }
+        });
+      },
+      // fires once the grid reaches the middle band of the viewport
+      { rootMargin: "-45% 0px -45% 0px" }
+    ).observe(workSection);
+  }
+
+  /* ---- 6. Footer year ---- */
   var year = document.querySelector("[data-year]");
   if (year) year.textContent = new Date().getFullYear();
 })();
