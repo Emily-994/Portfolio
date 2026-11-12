@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Puffolio — Emily Zhang</title>
+<meta name="description" content="Puffolio is an iPhone app that builds a daily drawing habit: one prompt, a short timer, any paper, and kind feedback from a pufferfish named Puff. A self-directed project by a team of four, made in six hours.">
+<link rel="icon" href="assets/img/favicon.png?v=2" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Sans+3:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="case-study">
+
+<div class="progress" aria-hidden="true"></div>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header at-top">
+  <nav class="nav wrap" aria-label="Primary">
+    <div class="nav-group">
+      <a class="nav-link nav-home" href="index.html"><span class="house" aria-hidden="true"></span><span class="visually-hidden">Home</span></a>
+    </div>
+    <div class="nav-group">
+      <a class="nav-link" href="index.html#work" data-nav="work" aria-current="true">Work</a>
+      <a class="nav-link" href="about.html">About</a>
+      <a class="nav-link" href="assets/resume/emily-zhang-resume.pdf" target="_blank" rel="noopener">Resume</a>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+
+  <article>
+
+    <header class="page-head wrap">
+      <p class="eyebrow">Self-directed project · Team of 4 · 6 hours</p>
+      <h1 class="page-title">Puffolio</h1>
+
+      <dl class="meta meta-band">
+        <div>
+          <dt>Role</dt>
+          <dd>Product Designer<br>Pitch &amp; Storytelling</dd>
+        </div>
+        <div>
+          <dt>Timeline</dt>
+          <dd>November 2026<br>6 hours</dd>
+        </div>
+        <div>
+          <dt>Skills</dt>
+          <dd>Product Design<br>Storytelling</dd>
+        </div>
+        <div>
+          <dt>Tools</dt>
+          <dd>Claude Code<br>Expo (React Native)</dd>
+        </div>
+      </dl>
+    </header>
+
+    <div class="wrap">
+
+      <div class="intro-grid">
+
+        <section class="section reveal">
+          <h2 class="label">Context</h2>
+          <div class="prose">
+            <p>
+              Puffolio is an iPhone app that builds a daily drawing habit. Every day
+              you get one prompt and a short timer, sketch it on any paper, and scan it
+              in. Puff, a pufferfish mascot, tells you what you did well, and your
+              sketch lands in a feed with your friends’ takes on the same prompt.
+            </p>
+            <p>
+              This was a self-directed project. Four of us, as team O Deer, designed
+              and built it within six hours: we drew a typeface, rigged a mascot with
+              nineteen expressions, and shipped a working app to our own phones. I
+              built the pitch deck and shaped the story we told with it.
+            </p>
+          </div>
+        </section>
+
+        <div class="intro-col">
+          <section class="section reveal">
+            <h2 class="label">The problem</h2>
+            <div class="prose">
+              <p>
+                Almost everyone says they wish they drew more, and almost nobody does.
+                A blank page gives you no reason to start today. Art communities rank,
+                score and compare, so one harsh comment is enough for a beginner to
+                stop posting. And sketches scatter across notebooks and camera rolls,
+                so the improvement is real but you never see it.
+              </p>
+            </div>
+          </section>
+
+          <section class="section reveal">
+            <h2 class="label">Design goals</h2>
+            <div class="prose">
+              <p>
+                We kept three words in front of us: easy, quirky, feels improvement.
+                Every feature was judged by whether it makes someone more likely to
+                come back tomorrow, not by whether it makes them better today. So the
+                app never grades, never punishes a missed day, and never shows a
+                sketch to strangers.
+              </p>
+            </div>
+          </section>
+        </div>
+
+      </div>
+
+      <section class="section" aria-labelledby="features-heading">
+        <h2 class="label reveal" id="features-heading">Features</h2>
+
+        <div class="features">
+
+          <section class="feature reveal">
+            <div class="feature-body">
+              <h3 class="feature-title">One Prompt a Day</h3>
+              <p>
+                A new prompt every morning, and everyone gets the same one. There is
+                nothing to decide and no blank page: open the app, read the prompt,
+                start sketching.
+              </p>
+            </div>
+            <figure class="feature-media feature-media--device">
+              <picture>
+                <source media="(prefers-reduced-motion: reduce)" srcset="assets/img/puffolio-1-prompt-still.jpg">
+                <img src="assets/img/puffolio-1-prompt.gif"
+                     alt="Screen recording: the streak screen gives way to the Puffolio home screen, where Puff greets you above today’s prompt, a deer, and reacts when tapped."
+                     width="293" height="600" loading="lazy" decoding="async">
+              </picture>
+            </figure>
+          </section>
+
+          <section class="feature reveal">
+            <div class="feature-body">
+              <h3 class="feature-title">Any Paper, Against the Clock</h3>
+              <p>
+                Paper is the main path: draw anywhere, then scan it. The prompt sets
+                the time, from thirty seconds to five minutes, and Puff gets more
+                nervous as it runs out. Go over and it still counts.
+              </p>
+            </div>
+            <figure class="feature-media feature-media--device">
+              <picture>
+                <source media="(prefers-reduced-motion: reduce)" srcset="assets/img/puffolio-2-timer-still.jpg">
+                <img src="assets/img/puffolio-2-timer.gif"
+                     alt="Screen recording: starting a thirty-second sketch of a deer. The timer counts down while Puff draws along, then gets nervous as it runs out."
+                     width="293" height="600" loading="lazy" decoding="async">
+              </picture>
+            </figure>
+          </section>
+
+          <section class="feature reveal">
+            <div class="feature-body">
+              <h3 class="feature-title">Streaks That Never Punish</h3>
+              <p>
+                Finishing a sketch moves your streak up, and a row of shrimp shows
+                your week. A streak freeze covers a missed day, because a broken
+                streak is the moment most people quit a habit app.
+              </p>
+            </div>
+            <figure class="feature-media feature-media--device">
+              <picture>
+                <source media="(prefers-reduced-motion: reduce)" srcset="assets/img/puffolio-3-streak-still.jpg">
+                <img src="assets/img/puffolio-3-streak.gif"
+                     alt="Screen recording: after posting, today’s shrimp cooks, the flame bursts and the streak ticks up to 8 days."
+                     width="293" height="600" loading="lazy" decoding="async">
+              </picture>
+            </figure>
+          </section>
+
+          <section class="feature reveal">
+            <div class="feature-body">
+              <h3 class="feature-title">Feedback in Puff’s Voice</h3>
+              <p>
+                A vision model reads your actual drawing and answers as Puff. The
+                shape is always the same: two things you nailed, circled right on the
+                sketch, and one gentle thing to try next. Never a score, never a
+                grade.
+              </p>
+            </div>
+            <figure class="feature-media feature-media--device">
+              <picture>
+                <source media="(prefers-reduced-motion: reduce)" srcset="assets/img/puffolio-4-feedback-still.jpg">
+                <img src="assets/img/puffolio-4-feedback.gif"
+                     alt="Screen recording: Puff’s notes on a sample sketch of a coffee mug. Two details are circled and numbered on the drawing, with a compliment for each and one thing to try next."
+                     width="293" height="600" loading="lazy" decoding="async">
+              </picture>
+            </figure>
+          </section>
+
+          <section class="feature reveal">
+            <div class="feature-body">
+              <h3 class="feature-title">Post Before You Peek</h3>
+              <p>
+                The feed is friends only, and it stays locked until you post today’s
+                sketch. Reactions are a fixed set of warm emoji with no free text, so
+                there is nowhere to tell someone their drawing is bad.
+              </p>
+            </div>
+            <figure class="feature-media feature-media--device">
+              <picture>
+                <source media="(prefers-reduced-motion: reduce)" srcset="assets/img/puffolio-5-feed-still.jpg">
+                <img src="assets/img/puffolio-5-feed.gif"
+                     alt="Screen recording: the feed after posting, with your deer sketch and emoji reactions on top, then friends’ deer sketches scrolling past."
+                     width="293" height="600" loading="lazy" decoding="async">
+              </picture>
+            </figure>
+          </section>
+
+          <section class="feature reveal">
+            <div class="feature-body">
+              <h3 class="feature-title">Sketch Archive and Sketch Wrapped</h3>
+              <p>
+                Pull down from home and every past sketch is there on one winding
+                path. Every seven sketches Puff writes a Sketch Wrapped about your
+                week, so you can see yourself getting better.
+              </p>
+            </div>
+            <figure class="feature-media feature-media--device">
+              <picture>
+                <source media="(prefers-reduced-motion: reduce)" srcset="assets/img/puffolio-6-archive-still.jpg">
+                <img src="assets/img/puffolio-6-archive.gif"
+                     alt="Screen recording: the sketch archive slides down over the home screen and scrolls through dated past sketches on a winding path."
+                     width="293" height="600" loading="lazy" decoding="async">
+              </picture>
+            </figure>
+          </section>
+
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="craft-heading">
+        <h2 class="label reveal" id="craft-heading">Mascot and typeface</h2>
+
+        <div class="craft">
+
+          <!-- Puff: every expression, scrolling in a loop (the team's live rig, in a frame) -->
+          <section class="craft-block craft-puff reveal" id="puff-strip">
+            <div class="craft-body feature-body">
+              <h3 class="feature-title">Puff, the Mascot</h3>
+              <p>
+                Puff is a pufferfish with nineteen expressions, one for every moment
+                in the loop. He squints while the AI is thinking, gets nervous when
+                the timer runs down, and draws along beside you so you are not
+                sketching alone.
+              </p>
+              <p>
+                He started as one hand-painted drawing. We split it into layers, cut
+                the mouth and pupils free so they could move, and rigged the pieces,
+                so every expression is animated from the same artwork. His hat,
+                glasses and brush unlock with streaks.
+              </p>
+            </div>
+
+            <iframe class="puff-strip" src="assets/puffolio/puff-rig.html" scrolling="no"
+                    title="All nineteen of Puff’s expressions, each animated with its mood named underneath, scrolling past in a loop"></iframe>
+          </section>
+
+          <!-- 3. Type tester -->
+          <section class="craft-block craft-type reveal" id="type-tester">
+            <div class="craft-body feature-body">
+              <h3 class="feature-title">Puff Hand, the Typeface</h3>
+              <p>
+                We drew the typeface too. Puff Hand is heavy, with hand-cut edges and
+                letters that roll a little off the baseline, so the interface looks
+                hand-made while it asks you to make something by hand. A plain version
+                sets headings, prompts and buttons; a three-layer colour version is
+                kept for the logo and celebrations.
+              </p>
+            </div>
+
+            <div class="tester">
+              <p class="try">Type your own words to see them in Puff Hand, then switch the style.</p>
+
+              <div class="tester-controls">
+                <div class="control control--grow">
+                  <input class="tester-input" id="tester-input" type="text" aria-label="Your words" value="a sketch a day" placeholder="a sketch a day" maxlength="20"
+                         autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="tester-help">
+                  <span class="tester-count" id="tester-count" aria-hidden="true">14/20</span>
+                </div>
+                <div class="control">
+                  <div class="chips" role="group" aria-label="Style">
+                    <button class="chip" type="button" data-style="plain" aria-pressed="true">Plain</button>
+                    <button class="chip" type="button" data-style="yellow" aria-pressed="false">Yellow</button>
+                    <button class="chip" type="button" data-style="pink" aria-pressed="false">Pink</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tester-output" data-style="plain" aria-live="polite">
+                <p class="tester-text" id="tester-text">a sketch a day</p>
+              </div>
+              <p class="note" id="tester-help">Up to 20 characters. Puff Hand covers letters, numbers and basic punctuation, so anything else you type is left out.</p>
+            </div>
+          </section>
+
+        </div>
+      </section>
+
+      <nav class="page-nav" aria-label="Project navigation">
+        <a class="page-nav-next" href="wait-room.html">
+          <span class="page-nav-eyebrow">Next project</span>
+          <span class="page-nav-name">Wait Room <span class="arrow" aria-hidden="true">→</span></span>
+        </a>
+      </nav>
+
+    </div>
+
+  </article>
+
+</main>
+
+<hr class="rule">
+
+<footer class="site-footer">
+  <div class="wrap">
+    <h2 class="visually-hidden">Footer</h2>
+    <div class="footer-line">
+      <span class="footer-sig">Emily Zhang, <span data-year>2026</span></span>
+      <div class="footer-nav">
+        <nav class="footer-links" aria-label="Contact">
+          <a class="footer-link" href="mailto:yunhanzh@andrew.cmu.edu">Email</a>
+          <a class="footer-link" href="https://www.linkedin.com/in/yunhan-zhang-52885b339" target="_blank" rel="noopener">Linkedin</a>
+        </nav>
+        <a class="footer-link footer-top" href="#top">Back to top <span class="arrow" aria-hidden="true">↑</span></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js" defer></script>
+<script src="assets/js/puffolio.js" defer></script>
+</body>
+</html>

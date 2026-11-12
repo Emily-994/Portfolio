@@ -1325,6 +1325,160 @@ ul, ol { list-style: none; padding: 0; }
 .feature-media--card video,
 .feature-media--card .feature-media-fallback { max-width: 76%; }
 
+/* Puffolio's clips are GIFs of the whole phone with the lime painted in, like the
+   Wait Room device clips, so they take the same treatment: no radius, no shadow. */
+.feature-media--device img { border-radius: 0; }
+
+/* A <picture> (GIF plus a reduced-motion still) must not become the grid item
+   itself, or the image's max-height has no box to resolve against. */
+.feature-media picture { display: contents; }
+.feature-media picture source { display: none; }
+.feature-body p + p { margin-top: 0.75rem; }
+
+/* --- Puffolio: "Mascot and typeface" -----------------------------------------
+   Two full-width blocks that break from the alternating feature cards above: a
+   strip of every expression that scrolls in a loop, and a type tester. They keep
+   the cards' hairline frame, lime panels and type, and the tester's controls are
+   the home page's tag pill, so nothing new is introduced. */
+.craft { display: grid; gap: clamp(1rem, 2vw, 1.75rem); }
+.craft-block {
+  border: 1px solid var(--rule);
+  padding: clamp(1.1rem, 2.2vw, 1.85rem);
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2.75rem);
+  align-items: center;
+}
+
+/* The instruction for an interaction: one plain sentence in the accent red. */
+.try,
+.case-study .feature-body p.try {
+  margin-top: 1.25rem;
+  color: var(--red);
+  text-wrap: pretty;
+}
+
+.control { margin-top: 1rem; }
+.control-label,
+.case-study .feature-body p.control-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: var(--fs-label);
+  line-height: 1.4;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+/* The tag pill, as a button: outlined when off, filled when on. */
+.chip {
+  appearance: none;
+  min-height: 2.25rem;
+  padding: 0.3rem 0.9rem;
+  border: 1px solid var(--red);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--red);
+  font: inherit;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 0.3s var(--ease), color 0.3s var(--ease);
+}
+.chip:hover { background: color-mix(in srgb, var(--red) 12%, transparent); }
+.chip[aria-pressed="true"] { background: var(--red); color: var(--cream); }
+.chip:focus-visible { outline-offset: 3px; border-radius: 999px; }
+
+/* Puff's expressions: text on top, then the strip running the card's full width.
+   The frame's height is set by the strip itself (see puffolio.js); the value here
+   only holds the space until it reports in. */
+.craft-puff { align-items: start; }
+.craft-puff .craft-body { max-width: 46rem; }
+.puff-strip {
+  display: block;
+  width: 100%;
+  height: clamp(11rem, 26vw, 14.5rem);
+  border: 0;
+}
+
+/* type tester, set live in the font itself */
+@font-face {
+  font-family: "Puff Hand";
+  src: url("../fonts/PuffHand-Regular.woff2") format("woff2");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Puff Hand Inlay";
+  src: url("../fonts/PuffHandInlay-Regular.woff2") format("woff2");
+  font-display: swap;
+}
+@font-palette-values --puff-blush {
+  font-family: "Puff Hand Inlay";
+  base-palette: 1;
+}
+.craft-type { align-items: start; }
+.craft-type .craft-body { max-width: 46rem; }
+.tester { display: grid; gap: 1rem; padding: 0 clamp(0.5rem, 1.4vw, 1.25rem) clamp(0.5rem, 1.4vw, 1.25rem); }
+.tester .try { margin-top: 0; }
+.tester-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; }
+.tester-controls .control { margin-top: 0; }
+.control--grow { flex: 1 1 16rem; position: relative; }
+/* characters used, tucked inside the right end of the box */
+.tester-count {
+  position: absolute;
+  right: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--fs-label);
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  pointer-events: none;
+}
+.tester-input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--ink-soft);
+  border-radius: 8px;
+  background: var(--cream-warm);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem;               /* 16px, so phones do not zoom on focus */
+  padding-right: 3.75rem;        /* room for the character count */
+}
+.tester-input::placeholder { color: var(--ink-soft); opacity: 1; }
+.tester-input:focus-visible { outline-offset: 2px; border-radius: 8px; }
+/* Plain sits on the page's lime. The colour versions go on graphite, the only
+   ground the team's own rules allow for them. */
+.tester-output {
+  container-type: inline-size;
+  display: grid;
+  place-items: center;
+  min-height: clamp(10rem, 24vw, 17rem);
+  padding: clamp(1.25rem, 4vw, 3rem);
+  background: var(--lime);
+  transition: background 0.4s var(--ease);
+}
+.tester-output[data-style="yellow"],
+.tester-output[data-style="pink"] { background: #2B2D33; }
+.tester-text,
+.case-study .tester-text {
+  font-family: "Puff Hand", var(--font);
+  font-size: clamp(2rem, 10cqw, 6.5rem);
+  line-height: 1.12;
+  text-align: center;
+  white-space: nowrap;           /* always one line; puffolio.js shrinks it to fit */
+  color: #2B2D33;
+}
+[data-style="yellow"] .tester-text,
+[data-style="pink"] .tester-text { font-family: "Puff Hand Inlay", "Puff Hand", var(--font); color: #FFC53D; }
+[data-style="pink"] .tester-text { font-palette: --puff-blush; color: #FF9DB0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .chip, .tester-output { transition: none; }
+}
+
 
 /* The still is only for reduced-motion. It needs two classes to outrank
    `.feature-media img` above, which would otherwise force it back to block and
